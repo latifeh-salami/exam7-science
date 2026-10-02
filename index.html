@@ -47,13 +47,13 @@
       background: var(--card-bg);
       border: 3px solid var(--pink-soft);
       border-radius: 28px;
-      padding: 26px;
+      padding: 24px;
       box-shadow: 0 12px 35px rgba(168, 85, 247, 0.15);
       position: relative;
     }
     .header-box {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       border-bottom: 2px dashed var(--pink-soft);
       padding-bottom: 12px;
     }
@@ -67,19 +67,6 @@
       font-size: 14px;
       color: var(--pink-neon);
       font-weight: 700;
-    }
-    .teacher-direct-btn {
-      position: absolute;
-      top: 18px;
-      left: 20px;
-      background: #f3e8ff;
-      border: 1px solid #c084fc;
-      color: var(--purple-dark);
-      font-size: 11.5px;
-      font-weight: 700;
-      padding: 5px 10px;
-      border-radius: 10px;
-      cursor: pointer;
     }
     .welcome-card {
       background: linear-gradient(135deg, #fff0f7, #f5edff);
@@ -101,7 +88,7 @@
       color: var(--purple-dark);
       margin-bottom: 6px;
     }
-    input[type="text"], select {
+    input[type="text"], input[type="password"], select {
       width: 100%;
       padding: 12px 14px;
       border: 2px solid #e9d5ff;
@@ -110,7 +97,7 @@
       outline: none;
       background-color: #faf5ff;
     }
-    input[type="text"]:focus, select:focus {
+    input[type="text"]:focus, input[type="password"]:focus, select:focus {
       border-color: var(--purple-neon);
       background-color: #fff;
     }
@@ -179,20 +166,24 @@
       cursor: pointer;
     }
     .hidden { display: none !important; }
-    .teacher-panel {
-      margin-top: 15px;
-      border-top: 2px dashed #d8b4fe;
+    .teacher-box-login {
+      margin-top: 25px;
       padding-top: 15px;
+      border-top: 2px dashed #e9d5ff;
+      text-align: center;
+    }
+    .teacher-panel {
+      margin-top: 10px;
     }
     .teacher-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 12px;
-      font-size: 12.5px;
+      font-size: 12px;
     }
     .teacher-table th, .teacher-table td {
       border: 1px solid #d8b4fe;
-      padding: 8px 6px;
+      padding: 8px 4px;
       text-align: center;
     }
     .teacher-table th {
@@ -203,11 +194,10 @@
     .btn-secondary {
       background: #7c3aed;
       color: white;
-      padding: 7px 14px;
+      padding: 8px 14px;
       border-radius: 10px;
       border: none;
       cursor: pointer;
-      margin: 4px;
       font-weight: 600;
       font-size: 13px;
     }
@@ -215,7 +205,7 @@
       background: #0284c7;
       color: white;
       border: none;
-      padding: 4px 8px;
+      padding: 4px 6px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 11px;
@@ -224,11 +214,11 @@
       background: #e11d48;
       color: white;
       border: none;
-      padding: 4px 8px;
+      padding: 4px 6px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 11px;
-      margin-right: 4px;
+      margin-right: 3px;
     }
     @media print {
       body * { visibility: hidden; }
@@ -241,8 +231,8 @@
 <body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;" ondragstart="return false;">
 
 <div class="container" id="appContainer">
+  <!-- صفحه لاگین دانش‌آموز -->
   <div id="step-login">
-    <button type="button" class="teacher-direct-btn" onclick="openTeacherAuth()">ورود دبیر 🔒</button>
     <div class="header-box">
       <h1>آزمون فصل اول علوم تجربی پایه هفتم</h1>
       <div class="sub-title">مدرسه زینب کبری • دبیر: لطیفه سلامی</div>
@@ -264,8 +254,18 @@
       </select>
     </div>
     <button type="button" class="btn" id="startBtn">شروع آزمون (زمان: ۱۵ دقیقه)</button>
+
+    <!-- بخش کاملاً مشخص و شفاف ورود دبیر در انتهای صفحه اول -->
+    <div class="teacher-box-login">
+      <div style="font-size: 13px; font-weight: 700; color: var(--purple-dark); margin-bottom: 8px;">🔐 بخش ویژه دبیر (مشاهده و ثبت نمرات):</div>
+      <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+        <input type="password" id="directTeacherPass" placeholder="رمز دبیر (0383)" style="max-width: 160px; padding: 8px 12px; font-size: 13px;">
+        <button type="button" class="btn-secondary" onclick="enterTeacherDashboard()">ورود به پنل دبیر</button>
+      </div>
+    </div>
   </div>
 
+  <!-- صفحه آزمون -->
   <div id="step-exam" class="hidden">
     <div class="top-bar">
       <span id="displayStudentInfo"></span>
@@ -277,6 +277,7 @@
     <button type="button" class="btn" id="nextBtn" style="margin-top: 14px;">ثبت پاسخ و سوال بعدی</button>
   </div>
 
+  <!-- صفحه پایان آزمون دانش‌آموز -->
   <div id="step-result" class="hidden">
     <div class="header-box">
       <h1>پاسخ‌های شما ثبت شد</h1>
@@ -290,12 +291,16 @@
         امکان شرکت مجدد در آزمون وجود ندارد.
       </p>
     </div>
+    <div style="text-align: center; margin-top: 20px;">
+      <button type="button" class="btn-secondary" onclick="location.reload()">بازگشت به صفحه اصلی</button>
+    </div>
   </div>
 
+  <!-- پنل مدیریت کامل دبیر -->
   <div id="teacherModal" class="hidden teacher-panel">
     <div class="header-box">
-      <h1>پنل مدیریت نمرات دبیر (خانم سلامی)</h1>
-      <div class="sub-title">امکان بازبینی، ویرایش نمره، حذف و چاپ کارنامه</div>
+      <h1>مدیریت نمرات دبیر (خانم سلامی)</h1>
+      <div class="sub-title">امکان ویرایش نمره، حذف و چاپ گزارش</div>
     </div>
     <div id="teacherTableArea">
       <div id="printArea">
@@ -307,20 +312,20 @@
           <thead>
             <tr>
               <th>ردیف</th>
-              <th>نام و نام خانوادگی</th>
+              <th>نام دانش‌آموز</th>
               <th>کلاس</th>
               <th>نمره (از ۱۵)</th>
-              <th>خروج از صفحه</th>
+              <th>خروج از آزمون</th>
               <th>ساعت ثبت</th>
-              <th class="no-print">عملیات دبیر</th>
+              <th class="no-print">عملیات</th>
             </tr>
           </thead>
           <tbody id="teacherTableBody"></tbody>
         </table>
       </div>
-      <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;" class="no-print">
         <button type="button" class="btn-secondary" style="background: #059669;" onclick="window.print()">🖨️ چاپ نمرات (پرینت / PDF)</button>
-        <button type="button" class="btn-secondary" style="background: #4b5563;" onclick="exitTeacherPanel()">بازگشت به صفحه اصلی</button>
+        <button type="button" class="btn-secondary" style="background: #4b5563;" onclick="exitTeacherPanel()">خروج از پنل دبیر</button>
       </div>
     </div>
   </div>
@@ -344,7 +349,7 @@
     {
       q: "۲. مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟",
       options: [
-        "طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
+        "طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌‌گیری",
         "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
         "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه",
         "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"
@@ -463,7 +468,7 @@
   let examActive = false;
   let cachedRecords = [];
 
-  // ضد اسکرین‌شات و ضد تقلب
+  // ضد اسکرین‌شات
   window.addEventListener('keyup', (e) => {
     if (e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.shiftKey && e.metaKey && (e.key === '3' || e.key === '4' || e.key === 's'))) {
       navigator.clipboard.writeText('');
@@ -492,10 +497,10 @@
       cheatWarnings++;
       triggerScreenShield();
       if (cheatWarnings >= 2) {
-        alert("⚠️ به دلیل خروج مکرر از صفحه، آزمون خاتمه یافته و برگه ثبت گردید!");
+        alert("⚠️ به دلیل خروج مکرر از صفحه، آزمون شما بسته و نمره جاری ثبت گردید!");
         finishExam();
       } else {
-        alert("⚠️ هشدار تقلب: هرگونه خروج از صفحه یا ثبت تصویر ممنوع است!");
+        alert("⚠️ هشدار: خروج از صفحه آزمون غیرمجاز است!");
       }
     }
   });
@@ -632,17 +637,17 @@
     }).catch(e => console.log(e));
   }
 
-  // بخش مدیریت و ورود مستقیم دبیر
-  function openTeacherAuth() {
-    const pass = prompt("لطفاً رمز ورود دبیر را وارد نمایید:");
+  // عملکردهای ورود مستقیم دبیر
+  function enterTeacherDashboard() {
+    const pass = document.getElementById("directTeacherPass").value.trim();
     if (pass === "0383") {
       document.getElementById("step-login").classList.add("hidden");
       document.getElementById("step-exam").classList.add("hidden");
       document.getElementById("step-result").classList.add("hidden");
       document.getElementById("teacherModal").classList.remove("hidden");
       loadTeacherTable();
-    } else if (pass !== null) {
-      alert("رمز دبیر نادرست است!");
+    } else {
+      alert("رمز دبیر نادرست است! رمز: 0383");
     }
   }
 
@@ -677,7 +682,7 @@
     tbody.innerHTML = "";
 
     if (!cachedRecords || cachedRecords.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7">هنوز نمره‌ای ثبت نشده است.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7">هنوز هیچ نمره‌ای ثبت نشده است.</td></tr>';
       return;
     }
 
@@ -692,8 +697,8 @@
           <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings || 0} بار</td>
           <td>${timeFormatted}</td>
           <td class="no-print">
-            <button class="btn-edit" onclick="editScore(${idx})">✏️ اصلاح نمره</button>
-            <button class="btn-del" onclick="deleteRecord(${idx})">🗑️ حذف</button>
+            <button type="button" class="btn-edit" onclick="editScore(${idx})">✏️ اصلاح</button>
+            <button type="button" class="btn-del" onclick="deleteRecord(${idx})">🗑️ حذف</button>
           </td>
         </tr>
       `;
@@ -714,7 +719,6 @@
     item.score = parsed;
     document.getElementById(`score-val-${idx}`).innerText = parsed;
 
-    // آپدیت در Supabase
     fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
       method: "PATCH",
       headers: {
@@ -725,16 +729,14 @@
       body: JSON.stringify({ score: parsed })
     }).catch(e => console.log(e));
 
-    // آپدیت لوکال
     localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
     alert("نمره با موفقیت اصلاح شد.");
   }
 
   async function deleteRecord(idx) {
     const item = cachedRecords[idx];
-    if (!confirm(`آیا مطمئن هستید که می‌خواهید ثبت نمره «${item.student_name}» را حذف کنید؟ با این کار او می‌تواند مجدداً در آزمون شرکت کند.`)) return;
+    if (!confirm(`آیا از حذف ثبت آزمون «${item.student_name}» اطمینان دارید؟ با حذف، این دانش‌آموز می‌تواند دوباره آزمون دهد.`)) return;
 
-    // حذف از Supabase
     fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
       method: "DELETE",
       headers: {
@@ -743,7 +745,6 @@
       }
     }).catch(e => console.log(e));
 
-    // رفع بلاک شرکت مجدد
     localStorage.removeItem("exam_done_" + item.student_key);
 
     cachedRecords.splice(idx, 1);
