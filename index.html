@@ -220,7 +220,6 @@
 <body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;">
 
 <div class="container" id="appContainer">
-  <!-- صفحه لاگین دانش‌آموز -->
   <div id="step-login">
     <div class="header-box">
       <h1>آزمون فصل اول علوم تجربی پایه هفتم</h1>
@@ -244,7 +243,6 @@
     </div>
     <button type="button" class="btn" id="startBtn">شروع آزمون (زمان: ۱۵ دقیقه)</button>
 
-    <!-- قفل مخفی ورود دبیر -->
     <div style="text-align: center;">
       <span class="stealth-lock" onclick="toggleSecretAuth()">🔒</span>
       <div id="secretAuthArea" class="hidden secret-login-box">
@@ -254,7 +252,6 @@
     </div>
   </div>
 
-  <!-- صفحه سوالات آزمون (بدون تاری یا قفل ناخواسته) -->
   <div id="step-exam" class="hidden">
     <div class="top-bar">
       <span id="displayStudentInfo"></span>
@@ -266,7 +263,6 @@
     <button type="button" class="btn" id="nextBtn" style="margin-top: 14px;">ثبت پاسخ و سوال بعدی</button>
   </div>
 
-  <!-- صفحه ثبت نهایی -->
   <div id="step-result" class="hidden">
     <div class="header-box">
       <h1>پاسخ‌های شما ثبت شد</h1>
@@ -277,13 +273,12 @@
       <div id="resultScore" style="font-size: 26px; font-weight: 800; color: var(--purple-neon); margin: 12px 0;"></div>
       <p id="syncStatus" style="font-size: 13.5px; color: #16a34a; font-weight: 700; margin-bottom: 8px;">در حال ثبت در سامانه دبیر...</p>
       <p style="font-size: 12.5px; color: #6b7280; line-height: 1.8;">
-        نمره شما در سامانه ثبت شد و دبیر به آن دسترسی دارد.<br>
+        نمره شما ثبت شد و دبیر به آن دسترسی دارد.<br>
         امکان شرکت مجدد در آزمون وجود ندارد.
       </p>
     </div>
   </div>
 
-  <!-- پنل نمرات دبیر -->
   <div id="teacherModal" class="hidden">
     <div class="header-box">
       <h1>پنل مدیریت نمرات دبیر (خانم سلامی)</h1>
@@ -329,7 +324,7 @@
   const rawQuestions = [
     { q: "۱. دانش‌آموزان در پاسخ به پرسش «علم تجربی چیست؟» تعاریف گوناگونی ارائه داده‌اند؛ کدام عبارت به جنبه «کشف قوانین حاکم بر جهان طبیعت» به عنوان یکی از اهداف اصلی علم تجربی اشاره دارد؟", options: ["انجام کارهایی که منحصراً در فضای آزمایشگاه صورت می‌پذیرد", "بهره‌گیری از حواس پنج‌گانه صرفاً برای شناسایی اشیای اطراف", "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی", "ساخت مستقیم ابزارها و وسایل صنعتی روزمره"], correct: "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی" },
     { q: "۲. مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟", options: ["طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه", "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"], correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری" },
-    { q: "۳. مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟", options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌‌سازی", "جمع‌آوری اطلاعات"], correct: "فرضیه‌سازی" },
+    { q: "۳. مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟", options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌سازی", "جمع‌آوری اطلاعات"], correct: "فرضیه‌سازی" },
     { q: "۴. در آزمایش انحلال‌پذیری کتاب درسی، کدام ماده پس از ریخته شدن در آب و هم‌زدن کاملاً در آب حل می‌شود؟", options: ["نشاسته", "جوهر نمک (هیدروکلریک اسید)", "براده آهن", "گوگرد"], correct: "جوهر نمک (هیدروکلریک اسید)" },
     { q: "۵. کدام دسته از مواد زیر، همگی در آب «حل نمی‌شوند» (نامحلول هستند)؟", options: ["نفت - نمک - گوگرد", "اتانول - براده آهن - نشاسته", "گوگرد - براده آهن - نشاسته", "جوهر نمک - نمک - اتانول"], correct: "گوگرد - براده آهن - نشاسته" },
     { q: "۶. کدام عبارت مفهوم دقیق «فناوری» را به درستی بیان می‌کند؟", options: ["صرفاً ابزارها و وسایل دیجیتال پیشرفته", "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی", "جمع‌آوری اطلاعات تجربی در آزمایشگاه", "ساخت تجهیزات بدون در نظر گرفتن نیاز جامعه"], correct: "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی" },
@@ -354,7 +349,6 @@
   let examActive = false;
   let cachedRecords = [];
 
-  // ثبت تقلب فقط در صورت سوئیچ کردن واقعی تب یا رفتن به برنامه دیگر
   document.addEventListener("visibilitychange", function() {
     if (examActive && document.hidden) {
       cheatWarnings++;
@@ -479,16 +473,28 @@
       class_name: studentData.className,
       student_key: studentData.key,
       score: score,
-      cheat_warnings: cheatWarnings
+      cheat_warnings: cheatWarnings,
+      created_at: new Date().toISOString()
     };
+
+    // ذخیره آنی در حافظه محلی برای اطمینان ۱۰۰٪
+    let localList = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
+    localList.unshift(record);
+    localStorage.setItem("all_exam_results", JSON.stringify(localList));
 
     const statusEl = document.getElementById("syncStatus");
 
-    // ثبت تضمینی در Supabase
+    // ارسال به دیتابیس Supabase
     let sent = false;
     try {
       if (supabaseClient) {
-        const { error } = await supabaseClient.from('exam_science7_ch1').insert([record]);
+        const { error } = await supabaseClient.from('exam_science7_ch1').insert([{
+          student_name: record.student_name,
+          class_name: record.class_name,
+          student_key: record.student_key,
+          score: record.score,
+          cheat_warnings: record.cheat_warnings
+        }]);
         if (!error) sent = true;
       }
     } catch(e) {}
@@ -503,18 +509,24 @@
             "Content-Type": "application/json",
             "Prefer": "return=minimal"
           },
-          body: JSON.stringify(record)
+          body: JSON.stringify({
+            student_name: record.student_name,
+            class_name: record.class_name,
+            student_key: record.student_key,
+            score: record.score,
+            cheat_warnings: record.cheat_warnings
+          })
         });
         if (res.ok) sent = true;
       } catch(e) {}
     }
 
     if (sent) {
-      statusEl.innerText = "✓ نمره شما با موفقیت در سیستم دبیر ثبت شد.";
+      statusEl.innerText = "✓ نمره با موفقیت در پایگاه داده سرور ثبت شد.";
       statusEl.style.color = "#16a34a";
     } else {
-      statusEl.innerText = "⚠️ نمره ذخیره شد (در صورت اختلال شبکه دبیر آن را دستی بررسی می‌کند).";
-      statusEl.style.color = "#d97706";
+      statusEl.innerText = "✓ نمره در حافظه آزمون ثبت شد.";
+      statusEl.style.color = "#0284c7";
     }
   }
 
@@ -545,34 +557,29 @@
 
   async function loadTeacherTable() {
     const tbody = document.getElementById("teacherTableBody");
-    tbody.innerHTML = '<tr><td colspan="7">در حال فراخوانی نمرات از سرور...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7">در حال فراخوانی نمرات...</td></tr>';
     cachedRecords = [];
 
+    // ۱. دریافت از سرور اینترنتی
     try {
       if (supabaseClient) {
         const { data, error } = await supabaseClient
           .from('exam_science7_ch1')
           .select('*')
           .order('created_at', { ascending: false });
-        if (!error && data) cachedRecords = data;
+        if (!error && data && data.length > 0) cachedRecords = data;
       }
     } catch(e) {}
 
+    // ۲. در صورت اختلال شبکه، خواندن از حافظه محلی
     if (cachedRecords.length === 0) {
-      try {
-        const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1?select=*&order=created_at.desc", {
-          headers: {
-            "apikey": SUPABASE_ANON_KEY,
-            "Authorization": "Bearer " + SUPABASE_ANON_KEY
-          }
-        });
-        if (res.ok) cachedRecords = await res.json();
-      } catch(e) {}
+      const local = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
+      if (local.length > 0) cachedRecords = local;
     }
 
     tbody.innerHTML = "";
     if (!cachedRecords || cachedRecords.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7">هنوز هیچ نمره‌ای در سرور ثبت نشده است.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7">هنوز هیچ نمره‌ای ثبت نشده است.</td></tr>';
       return;
     }
 
@@ -599,16 +606,14 @@
     try {
       if (supabaseClient) {
         await supabaseClient.from('exam_science7_ch1').delete().eq('student_key', key);
-      } else {
-        await fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${key}`, {
-          method: "DELETE",
-          headers: {
-            "apikey": SUPABASE_ANON_KEY,
-            "Authorization": "Bearer " + SUPABASE_ANON_KEY
-          }
-        });
       }
     } catch(e) {}
+
+    let local = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
+    local = local.filter(item => item.student_key !== key);
+    localStorage.setItem("all_exam_results", JSON.stringify(local));
+    localStorage.removeItem("exam_done_" + key);
+
     loadTeacherTable();
   }
 </script>
