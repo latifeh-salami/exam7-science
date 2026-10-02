@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     :root {
@@ -15,7 +16,7 @@
       --purple-neon: #a855f7;
       --purple-dark: #6b21a8;
       --lavender: #f3e8ff;
-      --card-bg: rgba(255, 255, 255, 0.96);
+      --card-bg: rgba(255, 255, 255, 0.98);
       --text-main: #37204f;
     }
     * {
@@ -25,7 +26,6 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
-      -webkit-touch-callout: none;
     }
     body {
       background: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 50%, #ede9fe 100%);
@@ -34,66 +34,61 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 16px;
-    }
-    .blur-screen {
-      filter: blur(25px) !important;
-      opacity: 0.05 !important;
-      pointer-events: none !important;
+      padding: 14px;
     }
     .container {
       width: 100%;
       max-width: 720px;
       background: var(--card-bg);
       border: 3px solid var(--pink-soft);
-      border-radius: 28px;
-      padding: 24px;
-      box-shadow: 0 12px 35px rgba(168, 85, 247, 0.15);
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
       position: relative;
     }
     .header-box {
       text-align: center;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       border-bottom: 2px dashed var(--pink-soft);
-      padding-bottom: 12px;
+      padding-bottom: 10px;
     }
     .header-box h1 {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 800;
       color: var(--purple-dark);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .header-box .sub-title {
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--pink-neon);
       font-weight: 700;
     }
     .welcome-card {
       background: linear-gradient(135deg, #fff0f7, #f5edff);
       border: 2px solid var(--pink-soft);
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 18px;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 16px;
       text-align: center;
       line-height: 1.8;
-      font-size: 13.5px;
+      font-size: 13px;
       color: #701a75;
       font-weight: 600;
     }
-    .field-group { margin-bottom: 16px; }
+    .field-group { margin-bottom: 14px; }
     label {
       display: block;
       font-weight: 600;
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--purple-dark);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
     input[type="text"], input[type="password"], select {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 13px;
       border: 2px solid #e9d5ff;
-      border-radius: 14px;
-      font-size: 14px;
+      border-radius: 12px;
+      font-size: 13.5px;
       outline: none;
       background-color: #faf5ff;
     }
@@ -106,24 +101,24 @@
       padding: 12px;
       background: linear-gradient(90deg, var(--pink-neon), var(--purple-neon));
       border: none;
-      border-radius: 16px;
+      border-radius: 14px;
       color: #fff;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 6px 18px rgba(255, 101, 163, 0.35);
       transition: all 0.2s;
     }
-    .btn:hover { opacity: 0.95; transform: translateY(-2px); }
+    .btn:hover { opacity: 0.95; }
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: var(--lavender);
-      border-radius: 14px;
-      padding: 10px 14px;
-      margin-bottom: 18px;
-      font-size: 13.5px;
+      border-radius: 12px;
+      padding: 9px 12px;
+      margin-bottom: 16px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--purple-dark);
     }
@@ -131,17 +126,17 @@
       background: #fff;
       border: 2px solid var(--pink-neon);
       color: var(--pink-neon);
-      padding: 3px 10px;
-      border-radius: 10px;
-      font-size: 14px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 13.5px;
       font-weight: 800;
     }
     .question-title {
-      font-size: 15.5px;
+      font-size: 15px;
       line-height: 1.8;
       font-weight: 700;
       color: var(--purple-dark);
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     .option-item {
       display: flex;
@@ -149,11 +144,11 @@
       gap: 10px;
       background: #faf5ff;
       border: 2px solid #ede9fe;
-      border-radius: 14px;
-      padding: 11px 13px;
-      margin-bottom: 10px;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 9px;
       cursor: pointer;
-      font-size: 13.5px;
+      font-size: 13px;
     }
     .option-item:hover {
       background: #fdf2f8;
@@ -161,33 +156,23 @@
     }
     .option-item input[type="radio"] {
       accent-color: var(--purple-neon);
-      width: 17px;
-      height: 17px;
+      width: 16px;
+      height: 16px;
       cursor: pointer;
     }
     .hidden { display: none !important; }
-    
-    /* قفل نامحسوس دبیر */
     .stealth-lock {
       opacity: 0.25;
-      font-size: 13px;
+      font-size: 14px;
       cursor: pointer;
       display: inline-block;
       margin-top: 15px;
-      transition: opacity 0.2s;
-    }
-    .stealth-lock:hover {
-      opacity: 0.9;
     }
     .secret-login-box {
-      margin-top: 12px;
+      margin-top: 10px;
       display: flex;
       justify-content: center;
       gap: 6px;
-    }
-
-    .teacher-panel {
-      margin-top: 10px;
     }
     .teacher-table {
       width: 100%;
@@ -197,7 +182,7 @@
     }
     .teacher-table th, .teacher-table td {
       border: 1px solid #d8b4fe;
-      padding: 8px 4px;
+      padding: 7px 4px;
       text-align: center;
     }
     .teacher-table th {
@@ -208,21 +193,12 @@
     .btn-secondary {
       background: #7c3aed;
       color: white;
-      padding: 8px 14px;
-      border-radius: 10px;
+      padding: 7px 12px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
       font-weight: 600;
-      font-size: 13px;
-    }
-    .btn-edit {
-      background: #0284c7;
-      color: white;
-      border: none;
-      padding: 4px 6px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
+      font-size: 12.5px;
     }
     .btn-del {
       background: #e11d48;
@@ -232,7 +208,6 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 11px;
-      margin-right: 3px;
     }
     @media print {
       body * { visibility: hidden; }
@@ -242,10 +217,10 @@
     }
   </style>
 </head>
-<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;" ondragstart="return false;">
+<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;">
 
 <div class="container" id="appContainer">
-  <!-- صفحه شروع دانش‌آموز -->
+  <!-- صفحه لاگین دانش‌آموز -->
   <div id="step-login">
     <div class="header-box">
       <h1>آزمون فصل اول علوم تجربی پایه هفتم</h1>
@@ -269,29 +244,29 @@
     </div>
     <button type="button" class="btn" id="startBtn">شروع آزمون (زمان: ۱۵ دقیقه)</button>
 
-    <!-- قفل مخفی دبیر در انتهای صفحه -->
+    <!-- قفل مخفی ورود دبیر -->
     <div style="text-align: center;">
       <span class="stealth-lock" onclick="toggleSecretAuth()">🔒</span>
       <div id="secretAuthArea" class="hidden secret-login-box">
-        <input type="password" id="secretPass" placeholder="گذرواژه امنیتی" style="max-width: 140px; padding: 6px 10px; font-size: 12px;">
-        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="verifySecretTeacher()">تأیید</button>
+        <input type="password" id="secretPass" placeholder="رمز دبیر" style="max-width: 130px; padding: 5px 8px; font-size: 12px;">
+        <button type="button" class="btn-secondary" style="padding: 5px 10px; font-size: 12px;" onclick="verifySecretTeacher()">ورود</button>
       </div>
     </div>
   </div>
 
-  <!-- صفحه سوالات آزمون -->
+  <!-- صفحه سوالات آزمون (بدون تاری یا قفل ناخواسته) -->
   <div id="step-exam" class="hidden">
     <div class="top-bar">
       <span id="displayStudentInfo"></span>
       <div>زمان: <span class="timer-badge" id="timer">15:00</span></div>
     </div>
-    <div id="questionProgress" style="font-size: 13px; color: #9333ea; font-weight: 700; margin-bottom: 8px;"></div>
+    <div id="questionProgress" style="font-size: 12.5px; color: #9333ea; font-weight: 700; margin-bottom: 6px;"></div>
     <div class="question-title" id="questionText"></div>
     <div id="optionsContainer"></div>
     <button type="button" class="btn" id="nextBtn" style="margin-top: 14px;">ثبت پاسخ و سوال بعدی</button>
   </div>
 
-  <!-- صفحه نتیجه آزمون -->
+  <!-- صفحه ثبت نهایی -->
   <div id="step-result" class="hidden">
     <div class="header-box">
       <h1>پاسخ‌های شما ثبت شد</h1>
@@ -299,45 +274,45 @@
     </div>
     <div style="text-align: center;">
       <p id="resultGreeting" style="font-size: 16px; font-weight: 700; color: #4c1d95;"></p>
-      <div id="resultScore" style="font-size: 26px; font-weight: 800; color: var(--purple-neon); margin: 14px 0;"></div>
-      <p style="font-size: 13.5px; color: #6b7280; line-height: 1.8;">
+      <div id="resultScore" style="font-size: 26px; font-weight: 800; color: var(--purple-neon); margin: 12px 0;"></div>
+      <p id="syncStatus" style="font-size: 13.5px; color: #16a34a; font-weight: 700; margin-bottom: 8px;">در حال ثبت در سامانه دبیر...</p>
+      <p style="font-size: 12.5px; color: #6b7280; line-height: 1.8;">
         نمره شما در سامانه ثبت شد و دبیر به آن دسترسی دارد.<br>
         امکان شرکت مجدد در آزمون وجود ندارد.
       </p>
     </div>
   </div>
 
-  <!-- پنل اختصاصی دبیر -->
-  <div id="teacherModal" class="hidden teacher-panel">
+  <!-- پنل نمرات دبیر -->
+  <div id="teacherModal" class="hidden">
     <div class="header-box">
-      <h1>مدیریت نمرات دبیر (خانم سلامی)</h1>
-      <div class="sub-title">امکان ویرایش نمره، حذف و چاپ گزارش</div>
+      <h1>پنل مدیریت نمرات دبیر (خانم سلامی)</h1>
+      <div class="sub-title">لیست آنلاین نمرات ارسالی دانش‌آموزان</div>
     </div>
-    <div id="teacherTableArea">
-      <div id="printArea">
-        <div style="text-align: center; margin: 15px 0 10px 0;">
-          <h2 style="font-size: 16.5px; font-weight: 800;">کارنامه آزمون فصل اول علوم تجربی هفتم - مدرسه زینب کبری</h2>
-          <p style="font-size: 13px;">دبیر مربوطه: لطیفه سلامی</p>
-        </div>
-        <table class="teacher-table">
-          <thead>
-            <tr>
-              <th>ردیف</th>
-              <th>نام دانش‌آموز</th>
-              <th>کلاس</th>
-              <th>نمره (از ۱۵)</th>
-              <th>خروج از آزمون</th>
-              <th>ساعت ثبت</th>
-              <th class="no-print">عملیات</th>
-            </tr>
-          </thead>
-          <tbody id="teacherTableBody"></tbody>
-        </table>
+    <div id="printArea">
+      <div style="text-align: center; margin: 10px 0;">
+        <h2 style="font-size: 15px; font-weight: 800;">کارنامه آزمون فصل اول علوم تجربی هفتم - مدرسه زینب کبری</h2>
+        <p style="font-size: 12px;">دبیر: لطیفه سلامی</p>
       </div>
-      <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;" class="no-print">
-        <button type="button" class="btn-secondary" style="background: #059669;" onclick="window.print()">🖨️ چاپ نمرات (پرینت / PDF)</button>
-        <button type="button" class="btn-secondary" style="background: #4b5563;" onclick="exitTeacherPanel()">خروج از پنل دبیر</button>
-      </div>
+      <table class="teacher-table">
+        <thead>
+          <tr>
+            <th>ردیف</th>
+            <th>نام دانش‌آموز</th>
+            <th>کلاس</th>
+            <th>نمره (از ۱۵)</th>
+            <th>خروج از آزمون</th>
+            <th>ساعت ثبت</th>
+            <th class="no-print">عملیات</th>
+          </tr>
+        </thead>
+        <tbody id="teacherTableBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top: 14px; display: flex; gap: 8px; justify-content: center;" class="no-print">
+      <button type="button" class="btn-secondary" style="background: #059669;" onclick="window.print()">🖨️ چاپ نمرات (PDF)</button>
+      <button type="button" class="btn-secondary" style="background: #2563eb;" onclick="loadTeacherTable()">🔄 رفرش جدول</button>
+      <button type="button" class="btn-secondary" style="background: #4b5563;" onclick="exitTeacherPanel()">خروج از پنل</button>
     </div>
   </div>
 </div>
@@ -346,127 +321,27 @@
   const SUPABASE_URL = "https://xalmrjsctdootauadkwt.supabase.co";
   const SUPABASE_ANON_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhbG1yanNjdGRvb3RhdWFka3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNjk2MjMsImV4cCI6MjEwNTk0NTYyM30.gTAhV5sssp2sHqUp7IcQo0OxzTA70U0V4GxG2KxCjAg";
 
+  let supabaseClient = null;
+  if (window.supabase) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+
   const rawQuestions = [
-    {
-      q: "۱. دانش‌آموزان در پاسخ به پرسش «علم تجربی چیست؟» تعاریف گوناگونی ارائه داده‌اند؛ کدام عبارت به جنبه «کشف قوانین حاکم بر جهان طبیعت» به عنوان یکی از اهداف اصلی علم تجربی اشاره دارد؟",
-      options: [
-        "انجام کارهایی که منحصراً در فضای آزمایشگاه صورت می‌پذیرد",
-        "بهره‌گیری از حواس پنج‌گانه صرفاً برای شناسایی اشیای اطراف",
-        "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی",
-        "ساخت مستقیم ابزارها و وسایل صنعتی روزمره"
-      ],
-      correct: "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی"
-    },
-    {
-      q: "۲. مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟",
-      options: [
-        "طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
-        "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
-        "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه",
-        "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"
-      ],
-      correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری"
-    },
-    {
-      q: "۳. مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟",
-      options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌سازی", "جمع‌آوری اطلاعات"],
-      correct: "فرضیه‌سازی"
-    },
-    {
-      q: "۴. در آزمایش انحلال‌پذیری کتاب درسی، کدام ماده پس از ریخته شدن در آب و هم‌زدن کاملاً در آب حل می‌شود؟",
-      options: ["نشاسته", "جوهر نمک (هیدروکلریک اسید)", "براده آهن", "گوگرد"],
-      correct: "جوهر نمک (هیدروکلریک اسید)"
-    },
-    {
-      q: "۵. کدام دسته از مواد زیر، همگی در آب «حل نمی‌شوند» (نامحلول هستند)؟",
-      options: [
-        "نفت - نمک - گوگرد",
-        "اتانول - براده آهن - نشاسته",
-        "گوگرد - براده آهن - نشاسته",
-        "جوهر نمک - نمک - اتانول"
-      ],
-      correct: "گوگرد - براده آهن - نشاسته"
-    },
-    {
-      q: "۶. کدام عبارت مفهوم دقیق «فناوری» را به درستی بیان می‌کند؟",
-      options: [
-        "صرفاً ابزارها و وسایل دیجیتال پیشرفته",
-        "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی",
-        "جمع‌آوری اطلاعات تجربی در آزمایشگاه",
-        "ساخت تجهیزات بدون در نظر گرفتن نیاز جامعه"
-      ],
-      correct: "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی"
-    },
-    {
-      q: "۷. کدام مورد یک نمونه از تبدیل علم به فناوری به شمار می‌رود؟",
-      options: ["تولید دارو", "نیروگاه هسته‌ای", "خودرو برقی", "همه موارد"],
-      correct: "همه موارد"
-    },
-    {
-      q: "۸. «مشاهده باکتری در زیر میکروسکوپ» مستقیماً در کدام حوزه طبقه‌بندی می‌شود؟",
-      options: ["فناوری صنعتی", "علم و مشاهده علمی", "طراحی مهندسی", "تولید فرآورده"],
-      correct: "علم و مشاهده علمی"
-    },
-    {
-      q: "۹. کدام مورد از دستاوردهای مهندسی کشورمان به عنوان «بزرگ‌ترین سد خاکی با هسته رسی در خاورمیانه» است؟",
-      options: ["سد کرخه", "سد کارون ۳", "سد سفیدرود", "سد دز"],
-      correct: "سد کرخه"
-    },
-    {
-      q: "۱۰. شبیه‌سازی حیوان «مارال» (قوچ وحشی) توسط متخصصان کشورمان با چه هدفی صورت گرفت؟",
-      options: [
-        "صادرات گوشت حیوانی",
-        "کمک به حفظ گونه‌های جانوری در معرض انقراض",
-        "اهلی کردن حیوانات بیابانی",
-        "جایگزینی دام‌های سنتی"
-      ],
-      correct: "کمک به حفظ گونه‌های جانوری در معرض انقراض"
-    },
-    {
-      q: "۱۱. هدف اصلی از طراحی و انجام یک «آزمایش» در روش علمی چیست؟",
-      options: [
-        "تأیید حتمی پیش‌بینی‌ها بدون ثبت خطا",
-        "بررسی درستی یا نادرستی فرضیه و پیش‌بینی",
-        "صرفاً جمع‌آوری وسایل آزمایشگاهی",
-        "اثبات سریع حدس‌ها بدون تکرار"
-      ],
-      correct: "بررسی درستی یا نادرستی فرضیه و پیش‌بینی"
-    },
-    {
-      q: "۱۲. موفقیت و پیشرفت سریع علم و فناوری وابسته به کدام عامل اساسی است؟",
-      options: [
-        "فعالیت مستقل و بدون ارتباط شاخه‌ها با یکدیگر",
-        "تمرکز صرف روی یک شاخه خاص",
-        "فعالیت مشترک دانشمندان در شاخه‌های گوناگون علوم تجربی",
-        "کنار گذاشتن فعالیت‌های آزمایشگاهی"
-      ],
-      correct: "فعالیت مشترک دانشمندان در شاخه‌های گوناگون علوم تجربی"
-    },
-    {
-      q: "۱۳. کدام گزینه بیانگر پیامد نامطلوب توسعه یک فناوری مفید است؟",
-      options: [
-        "استفاده از سوخت فسیلی در خودروها و افزایش آلودگی هوا",
-        "ساخت قطار برای سفر امن مسافران",
-        "تولید تلفن همراه برای ارتباطات سریع",
-        "تولید دارو برای درمان بیماری‌ها"
-      ],
-      correct: "استفاده از سوخت فسیلی در خودروها و افزایش آلودگی هوا"
-    },
-    {
-      q: "۱۴. عبارت «کپک، احتمالاً ماده‌ای تولید می‌کند که باکتری‌ها را از بین می‌برد» بیانگر کدام مرحله علمی است؟",
-      options: ["مشاهده", "فرضیه", "نتیجه‌گیری قطعی", "ثبت گزارش نهایی"],
-      correct: "فرضیه"
-    },
-    {
-      q: "۱۵. وضعیت انحلال «اتانول» و «نفت» در آب چگونه است؟",
-      options: [
-        "هر دو ماده در آب حل می‌شوند",
-        "اتانول حل می‌شود، اما نفت در آب حل نمی‌شود",
-        "هیچ‌کدام در آب حل نمی‌شوند",
-        "نفت حل می‌شود، اما اتانول حل نمی‌شود"
-      ],
-      correct: "اتانول حل می‌شود، اما نفت در آب حل نمی‌شود"
-    }
+    { q: "۱. دانش‌آموزان در پاسخ به پرسش «علم تجربی چیست؟» تعاریف گوناگونی ارائه داده‌اند؛ کدام عبارت به جنبه «کشف قوانین حاکم بر جهان طبیعت» به عنوان یکی از اهداف اصلی علم تجربی اشاره دارد؟", options: ["انجام کارهایی که منحصراً در فضای آزمایشگاه صورت می‌پذیرد", "بهره‌گیری از حواس پنج‌گانه صرفاً برای شناسایی اشیای اطراف", "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی", "ساخت مستقیم ابزارها و وسایل صنعتی روزمره"], correct: "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی" },
+    { q: "۲. مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟", options: ["طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه", "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"], correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری" },
+    { q: "۳. مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟", options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌‌سازی", "جمع‌آوری اطلاعات"], correct: "فرضیه‌سازی" },
+    { q: "۴. در آزمایش انحلال‌پذیری کتاب درسی، کدام ماده پس از ریخته شدن در آب و هم‌زدن کاملاً در آب حل می‌شود؟", options: ["نشاسته", "جوهر نمک (هیدروکلریک اسید)", "براده آهن", "گوگرد"], correct: "جوهر نمک (هیدروکلریک اسید)" },
+    { q: "۵. کدام دسته از مواد زیر، همگی در آب «حل نمی‌شوند» (نامحلول هستند)؟", options: ["نفت - نمک - گوگرد", "اتانول - براده آهن - نشاسته", "گوگرد - براده آهن - نشاسته", "جوهر نمک - نمک - اتانول"], correct: "گوگرد - براده آهن - نشاسته" },
+    { q: "۶. کدام عبارت مفهوم دقیق «فناوری» را به درستی بیان می‌کند؟", options: ["صرفاً ابزارها و وسایل دیجیتال پیشرفته", "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی", "جمع‌آوری اطلاعات تجربی در آزمایشگاه", "ساخت تجهیزات بدون در نظر گرفتن نیاز جامعه"], correct: "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی" },
+    { q: "۷. کدام مورد یک نمونه از تبدیل علم به فناوری به شمار می‌رود؟", options: ["تولید دارو", "نیروگاه هسته‌ای", "خودرو برقی", "همه موارد"], correct: "همه موارد" },
+    { q: "۸. «مشاهده باکتری در زیر میکروسکوپ» مستقیماً در کدام حوزه طبقه‌بندی می‌شود؟", options: ["فناوری صنعتی", "علم و مشاهده علمی", "طراحی مهندسی", "تولید فرآورده"], correct: "علم و مشاهده علمی" },
+    { q: "۹. کدام مورد از دستاوردهای مهندسی کشورمان به عنوان «بزرگ‌ترین سد خاکی با هسته رسی در خاورمیانه» است؟", options: ["سد کرخه", "سد کارون ۳", "سد سفیدرود", "سد دز"], correct: "سد کرخه" },
+    { q: "۱۰. شبیه‌سازی حیوان «مارال» (قوچ وحشی) توسط متخصصان کشورمان با چه هدفی صورت گرفت؟", options: ["صادرات گوشت حیوانی", "کمک به حفظ گونه‌های جانوری در معرض انقراض", "اهلی کردن حیوانات بیابانی", "جایگزینی دام‌های سنتی"], correct: "کمک به حفظ گونه‌های جانوری در معرض انقراض" },
+    { q: "۱۱. هدف اصلی از طراحی و انجام یک «آزمایش» در روش علمی چیست؟", options: ["تأیید حتمی پیش‌بینی‌ها بدون ثبت خطا", "بررسی درستی یا نادرستی فرضیه و پیش‌بینی", "صرفاً جمع‌آوری وسایل آزمایشگاهی", "اثبات سریع حدس‌ها بدون تکرار"], correct: "بررسی درستی یا نادرستی فرضیه و پیش‌بینی" },
+    { q: "۱۲. موفقیت و پیشرفت سریع علم و فناوری وابسته به کدام عامل اساسی است؟", options: ["فعالیت مستقل و بدون ارتباط شاخه‌ها با یکدیگر", "تمرکز صرف روی یک شاخه خاص", "فعالیت مشترک دانشمندان در شاخه‌های گوناگون علوم تجربی", "کنار گذاشتن فعالیت‌های آزمایشگاهی"], correct: "فعالیت مشترک دانشمندان در شاخه‌های گوناگون علوم تجربی" },
+    { q: "۱۳. کدام گزینه بیانگر پیامد نامطلوب توسعه یک فناوری مفید است؟", options: ["استفاده از سوخت فسیلی در خودروها و افزایش آلودگی هوا", "ساخت قطار برای سفر امن مسافران", "تولید تلفن همراه برای ارتباطات سریع", "تولید دارو برای درمان بیماری‌ها"], correct: "استفاده از سوخت فسیلی در خودروها و افزایش آلودگی هوا" },
+    { q: "۱۴. عبارت «کپک، احتمالاً ماده‌ای تولید می‌کند که باکتری‌ها را از بین می‌برد» بیانگر کدام مرحله علمی است؟", options: ["مشاهده", "فرضیه", "نتیجه‌گیری قطعی", "ثبت گزارش نهایی"], correct: "فرضیه" },
+    { q: "۱۵. وضعیت انحلال «اتانول» و «نفت» در آب چگونه است؟", options: ["هر دو ماده در آب حل می‌شوند", "اتانول حل می‌شود، اما نفت در آب حل نمی‌شود", "هیچ‌کدام در آب حل نمی‌شوند", "نفت حل می‌شود، اما اتانول حل نمی‌شود"], correct: "اتانول حل می‌شود، اما نفت در آب حل نمی‌شود" }
   ];
 
   let examQuestions = [];
@@ -479,39 +354,15 @@
   let examActive = false;
   let cachedRecords = [];
 
-  // سیستم ضد اسکرین‌شات
-  window.addEventListener('keyup', (e) => {
-    if (e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.shiftKey && e.metaKey && (e.key === '3' || e.key === '4' || e.key === 's'))) {
-      navigator.clipboard.writeText('');
-      triggerScreenShield();
-    }
-  });
-
-  window.addEventListener('blur', () => {
-    if (examActive) triggerScreenShield();
-  });
-
-  window.addEventListener('focus', () => {
-    document.getElementById("appContainer").classList.remove("blur-screen");
-  });
-
-  function triggerScreenShield() {
-    const container = document.getElementById("appContainer");
-    container.classList.add("blur-screen");
-    setTimeout(() => {
-      container.classList.remove("blur-screen");
-    }, 2000);
-  }
-
+  // ثبت تقلب فقط در صورت سوئیچ کردن واقعی تب یا رفتن به برنامه دیگر
   document.addEventListener("visibilitychange", function() {
     if (examActive && document.hidden) {
       cheatWarnings++;
-      triggerScreenShield();
       if (cheatWarnings >= 2) {
-        alert("⚠️ به دلیل خروج مکرر از صفحه، آزمون شما بسته و نمره جاری ثبت گردید!");
+        alert("⚠️ به دلیل خروج مکرر از صفحه، آزمون شما بسته و برگه ثبت شد!");
         finishExam();
       } else {
-        alert("⚠️ هشدار: خروج از صفحه آزمون غیرمجاز است!");
+        alert("⚠️ هشدار: خروج از صفحه آزمون ممنوع است!");
       }
     }
   });
@@ -540,7 +391,7 @@
     const studentKey = (studentClass + "_" + name).replace(/\s+/g, '_');
 
     if (localStorage.getItem("exam_done_" + studentKey) === "true") {
-      alert("شما قبلاً در این آزمون شرکت کرده‌‌اید و نمره شما ثبت شده است.");
+      alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما ثبت شده است.");
       return;
     }
 
@@ -610,7 +461,7 @@
     }
   });
 
-  function finishExam() {
+  async function finishExam() {
     if (!examActive) return;
     examActive = false;
     clearInterval(timerInterval);
@@ -628,39 +479,53 @@
       class_name: studentData.className,
       student_key: studentData.key,
       score: score,
-      cheat_warnings: cheatWarnings,
-      created_at: new Date().toISOString()
+      cheat_warnings: cheatWarnings
     };
 
-    const localList = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
-    localList.push(record);
-    localStorage.setItem("all_exam_results", JSON.stringify(localList));
+    const statusEl = document.getElementById("syncStatus");
 
-    fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1", {
-      method: "POST",
-      headers: {
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-        "Content-Type": "application/json",
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify(record)
-    }).catch(e => console.log(e));
+    // ثبت تضمینی در Supabase
+    let sent = false;
+    try {
+      if (supabaseClient) {
+        const { error } = await supabaseClient.from('exam_science7_ch1').insert([record]);
+        if (!error) sent = true;
+      }
+    } catch(e) {}
+
+    if (!sent) {
+      try {
+        const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1", {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify(record)
+        });
+        if (res.ok) sent = true;
+      } catch(e) {}
+    }
+
+    if (sent) {
+      statusEl.innerText = "✓ نمره شما با موفقیت در سیستم دبیر ثبت شد.";
+      statusEl.style.color = "#16a34a";
+    } else {
+      statusEl.innerText = "⚠️ نمره ذخیره شد (در صورت اختلال شبکه دبیر آن را دستی بررسی می‌کند).";
+      statusEl.style.color = "#d97706";
+    }
   }
 
-  // پنل امنیتی دبیر (ورود نامحسوس)
   function toggleSecretAuth() {
     const area = document.getElementById("secretAuthArea");
     area.classList.toggle("hidden");
-    if (!area.classList.contains("hidden")) {
-      document.getElementById("secretPass").focus();
-    }
   }
 
   function verifySecretTeacher() {
     const pass = document.getElementById("secretPass").value.trim();
-    // بررسی رمز به صورت هش‌شده (MD5/Base64 معادل 0383)
-    if (btoa(pass) === "MDM4Mw==") {
+    if (pass === "0383") {
       document.getElementById("secretPass").value = "";
       document.getElementById("secretAuthArea").classList.add("hidden");
       document.getElementById("step-login").classList.add("hidden");
@@ -669,8 +534,7 @@
       document.getElementById("teacherModal").classList.remove("hidden");
       loadTeacherTable();
     } else {
-      alert("گذرواژه نادرست است!");
-      document.getElementById("secretPass").value = "";
+      alert("رمز دبیر نادرست است!");
     }
   }
 
@@ -680,99 +544,72 @@
   }
 
   async function loadTeacherTable() {
+    const tbody = document.getElementById("teacherTableBody");
+    tbody.innerHTML = '<tr><td colspan="7">در حال فراخوانی نمرات از سرور...</td></tr>';
     cachedRecords = [];
+
     try {
-      const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1?select=*&order=created_at.desc", {
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": "Bearer " + SUPABASE_ANON_KEY
-        }
-      });
-      if (res.ok) {
-        cachedRecords = await res.json();
+      if (supabaseClient) {
+        const { data, error } = await supabaseClient
+          .from('exam_science7_ch1')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (!error && data) cachedRecords = data;
       }
     } catch(e) {}
 
-    if (!cachedRecords || cachedRecords.length === 0) {
-      cachedRecords = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
+    if (cachedRecords.length === 0) {
+      try {
+        const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1?select=*&order=created_at.desc", {
+          headers: {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY
+          }
+        });
+        if (res.ok) cachedRecords = await res.json();
+      } catch(e) {}
     }
 
-    renderTable();
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById("teacherTableBody");
     tbody.innerHTML = "";
-
     if (!cachedRecords || cachedRecords.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7">هنوز هیچ نمره‌ای ثبت نشده است.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7">هنوز هیچ نمره‌ای در سرور ثبت نشده است.</td></tr>';
       return;
     }
 
     cachedRecords.forEach((row, idx) => {
-      const timeFormatted = new Date(row.created_at).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+      const timeFormatted = row.created_at ? new Date(row.created_at).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) : '-';
       tbody.innerHTML += `
         <tr>
           <td>${idx + 1}</td>
           <td>${row.student_name}</td>
           <td>${row.class_name}</td>
-          <td style="font-weight: 800; color: #7e22ce;" id="score-val-${idx}">${row.score}</td>
+          <td style="font-weight: 800; color: #7e22ce;">${row.score}</td>
           <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings || 0} بار</td>
           <td>${timeFormatted}</td>
           <td class="no-print">
-            <button type="button" class="btn-edit" onclick="editScore(${idx})">✏️ اصلاح</button>
-            <button type="button" class="btn-del" onclick="deleteRecord(${idx})">🗑️ حذف</button>
+            <button type="button" class="btn-del" onclick="deleteRecord('${row.student_key}')">🗑️</button>
           </td>
         </tr>
       `;
     });
   }
 
-  async function editScore(idx) {
-    const item = cachedRecords[idx];
-    const newScore = prompt(`نمره جدید برای «${item.student_name}» را وارد کنید (۰ تا ۱۵):`, item.score);
-    if (newScore === null || newScore.trim() === "") return;
-
-    const parsed = parseInt(newScore, 10);
-    if (isNaN(parsed) || parsed < 0 || parsed > 15) {
-      alert("لطفاً یک نمره معتبر بین ۰ تا ۱۵ وارد کنید.");
-      return;
-    }
-
-    item.score = parsed;
-    document.getElementById(`score-val-${idx}`).innerText = parsed;
-
-    fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
-      method: "PATCH",
-      headers: {
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ score: parsed })
-    }).catch(e => console.log(e));
-
-    localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
-    alert("نمره با موفقیت اصلاح شد.");
-  }
-
-  async function deleteRecord(idx) {
-    const item = cachedRecords[idx];
-    if (!confirm(`آیا از حذف آزمون «${item.student_name}» اطمینان دارید؟ با حذف، این دانش‌آموز می‌تواند دوباره آزمون دهد.`)) return;
-
-    fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
-      method: "DELETE",
-      headers: {
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": "Bearer " + SUPABASE_ANON_KEY
+  async function deleteRecord(key) {
+    if (!confirm("آیا از حذف این رکورد اطمینان دارید؟")) return;
+    try {
+      if (supabaseClient) {
+        await supabaseClient.from('exam_science7_ch1').delete().eq('student_key', key);
+      } else {
+        await fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${key}`, {
+          method: "DELETE",
+          headers: {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY
+          }
+        });
       }
-    }).catch(e => console.log(e));
-
-    localStorage.removeItem("exam_done_" + item.student_key);
-
-    cachedRecords.splice(idx, 1);
-    localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
-    renderTable();
+    } catch(e) {}
+    loadTeacherTable();
   }
 </script>
 
