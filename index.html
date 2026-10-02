@@ -248,7 +248,7 @@
       <p id="resultGreeting" style="font-size: 16px; font-weight: 700; color: #4c1d95;"></p>
       <div id="resultScore" style="font-size: 26px; font-weight: 800; color: var(--purple-neon); margin: 14px 0;"></div>
       <p style="font-size: 13.5px; color: #6b7280; line-height: 1.8;">
-        نمره شما در سامانه ابری ثبت شد و دبیر به آن دسترسی دارد.<br>
+        نمره شما در سامانه ثبت شد و دبیر به آن دسترسی دارد.<br>
         امکان شرکت مجدد در آزمون وجود ندارد.
       </p>
     </div>
@@ -256,7 +256,7 @@
     <div class="teacher-panel">
       <h3 style="font-size: 13.5px; color: var(--purple-dark); margin-bottom: 8px;">بخش مدیریت دبیر (خانم سلامی):</h3>
       <input type="password" id="teacherPass" placeholder="رمز ورود دبیر" style="width: 170px; padding: 6px; border-radius: 8px; border: 1px solid #c084fc; font-size: 13px;">
-      <button class="btn-secondary" onclick="fetchTeacherData()">دریافت آنلاین نمرات</button>
+      <button class="btn-secondary" onclick="fetchTeacherData()">دریافت نمرات</button>
 
       <div id="teacherTableArea" class="hidden">
         <div id="printArea">
@@ -278,7 +278,7 @@
             <tbody id="teacherTableBody"></tbody>
           </table>
         </div>
-        <button class="btn-secondary" style="margin-top: 12px; background: #059669;" onclick="window.print()">🖨️️ چاپ نمرات (پرینت / دانلود PDF)</button>
+        <button class="btn-secondary" style="margin-top: 12px; background: #059669;" onclick="window.print()">🖨 چاپ نمرات (پرینت / دانلود PDF)</button>
       </div>
     </div>
   </div>
@@ -301,14 +301,14 @@
       options: [
         "طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
         "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
-        "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه",
+        "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه",
         "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"
       ],
       correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری"
     },
     {
       q: "۳. مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟",
-      options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌‌سازی", "جمع‌آوری اطلاعات"],
+      options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌سازی", "جمع‌آوری اطلاعات"],
       correct: "فرضیه‌سازی"
     },
     {
@@ -369,7 +369,7 @@
         "صرفاً جمع‌آوری وسایل آزمایشگاهی",
         "اثبات سریع حدس‌ها بدون تکرار"
       ],
-      correct: "بررسی درستی یا نادرستی فرضیه و پیش‌بینی"
+      correct: "بررسی درستی یا نادرستی فرضیه و پیش‌‌بینی"
     },
     {
       q: "۱۲. موفقیت و پیشرفت سریع علم و فناوری وابسته به کدام عامل اساسی است؟",
@@ -409,8 +409,14 @@
   ];
 
   const SUPABASE_URL = "https://xalmrjsctdootauadkwt.supabase.co";
-  const SUPABASE_ANON_KEY = "کلید_anon_public_را_اینجا_پیست_کنید";
-  const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  const SUPABASE_ANON_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhbG1yanNjdGRvb3RhdWFka3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNjk2MjMsImV4cCI6MjEwNTk0NTYyM30.gTAhV5sssp2sHqUp7IcQo0OxzTA70U0V4GxG2KxCjAg";
+  
+  let supabase = null;
+  try {
+    if (window.supabase) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+  } catch(e) { console.log(e); }
 
   let examQuestions = [];
   let currentQuestionIndex = 0;
@@ -442,7 +448,7 @@
     }
   });
 
-  async function startExam() {
+  function startExam() {
     const name = document.getElementById("studentName").value.trim();
     const studentClass = document.getElementById("studentClass").value;
 
@@ -453,16 +459,9 @@
 
     const studentKey = `${studentClass}_${name}`.replace(/\s+/g, '_');
 
-    if (supabase) {
-      const { data } = await supabase
-        .from('exam_science7_ch1')
-        .select('id')
-        .eq('student_key', studentKey);
-
-      if (data && data.length > 0) {
-        alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما در سیستم ثبت شده است.");
-        return;
-      }
+    if (localStorage.getItem("exam_done_" + studentKey) === "true") {
+      alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما در سیستم ثبت شده است.");
+      return;
     }
 
     studentData.name = name;
@@ -550,16 +549,26 @@
     document.getElementById("resultGreeting").innerText = `آفرین به تلاش قشنگت، ${studentData.name} عزیز!`;
     document.getElementById("resultScore").innerText = `نمره نهایی: ${score} از ۱۵`;
 
+    localStorage.setItem("exam_done_" + studentData.key, "true");
+
+    const localList = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
+    const record = {
+      student_name: studentData.name,
+      class_name: studentData.className,
+      student_key: studentData.key,
+      score: score,
+      cheat_warnings: cheatWarnings,
+      created_at: new Date().toISOString()
+    };
+    localList.push(record);
+    localStorage.setItem("all_exam_results", JSON.stringify(localList));
+
     if (supabase) {
-      await supabase.from('exam_science7_ch1').insert([
-        {
-          student_name: studentData.name,
-          class_name: studentData.className,
-          student_key: studentData.key,
-          score: score,
-          cheat_warnings: cheatWarnings
-        }
-      ]);
+      try {
+        await supabase.from('exam_science7_ch1').insert([record]);
+      } catch (e) {
+        console.error("خطا در ارسال آنلاین:", e);
+      }
     }
   }
 
@@ -570,28 +579,33 @@
       return;
     }
 
-    if (!supabase) {
-      alert("ارتباط با پایگاه داده برقرار نیست؛ لطفاً مقادیر API را بررسی نمایید.");
-      return;
+    let records = [];
+
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('exam_science7_ch1')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) {
+          records = data;
+        }
+      } catch (err) {
+        console.warn("استفاده از حافظه لوکال:", err);
+      }
     }
 
-    const { data, error } = await supabase
-      .from('exam_science7_ch1')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      alert("خطا در بازیابی داده‌ها: " + error.message);
-      return;
+    if (records.length === 0) {
+      records = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
     }
 
     const tbody = document.getElementById("teacherTableBody");
     tbody.innerHTML = "";
 
-    if (!data || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6">هنوز هیچ نمره‌ای ثبت نشده است.</td></tr>`;
+    if (records.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6">هنوز نمره‌ای ثبت نشده است.</td></tr>`;
     } else {
-      data.forEach((row, idx) => {
+      records.forEach((row, idx) => {
         const timeFormatted = new Date(row.created_at).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
         tbody.innerHTML += `
           <tr>
@@ -599,7 +613,7 @@
             <td>${row.student_name}</td>
             <td>${row.class_name}</td>
             <td style="font-weight: 800; color: #7e22ce;">${row.score}</td>
-            <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings} بار</td>
+            <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings || 0} بار</td>
             <td>${timeFormatted}</td>
           </tr>
         `;
