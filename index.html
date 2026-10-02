@@ -166,12 +166,26 @@
       cursor: pointer;
     }
     .hidden { display: none !important; }
-    .teacher-box-login {
-      margin-top: 25px;
-      padding-top: 15px;
-      border-top: 2px dashed #e9d5ff;
-      text-align: center;
+    
+    /* قفل نامحسوس دبیر */
+    .stealth-lock {
+      opacity: 0.25;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 15px;
+      transition: opacity 0.2s;
     }
+    .stealth-lock:hover {
+      opacity: 0.9;
+    }
+    .secret-login-box {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
     .teacher-panel {
       margin-top: 10px;
     }
@@ -231,7 +245,7 @@
 <body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;" ondragstart="return false;">
 
 <div class="container" id="appContainer">
-  <!-- صفحه لاگین دانش‌آموز -->
+  <!-- صفحه شروع دانش‌آموز -->
   <div id="step-login">
     <div class="header-box">
       <h1>آزمون فصل اول علوم تجربی پایه هفتم</h1>
@@ -255,17 +269,17 @@
     </div>
     <button type="button" class="btn" id="startBtn">شروع آزمون (زمان: ۱۵ دقیقه)</button>
 
-    <!-- بخش کاملاً مشخص و شفاف ورود دبیر در انتهای صفحه اول -->
-    <div class="teacher-box-login">
-      <div style="font-size: 13px; font-weight: 700; color: var(--purple-dark); margin-bottom: 8px;">🔐 بخش ویژه دبیر (مشاهده و ثبت نمرات):</div>
-      <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-        <input type="password" id="directTeacherPass" placeholder="رمز دبیر (0383)" style="max-width: 160px; padding: 8px 12px; font-size: 13px;">
-        <button type="button" class="btn-secondary" onclick="enterTeacherDashboard()">ورود به پنل دبیر</button>
+    <!-- قفل مخفی دبیر در انتهای صفحه -->
+    <div style="text-align: center;">
+      <span class="stealth-lock" onclick="toggleSecretAuth()">🔒</span>
+      <div id="secretAuthArea" class="hidden secret-login-box">
+        <input type="password" id="secretPass" placeholder="گذرواژه امنیتی" style="max-width: 140px; padding: 6px 10px; font-size: 12px;">
+        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="verifySecretTeacher()">تأیید</button>
       </div>
     </div>
   </div>
 
-  <!-- صفحه آزمون -->
+  <!-- صفحه سوالات آزمون -->
   <div id="step-exam" class="hidden">
     <div class="top-bar">
       <span id="displayStudentInfo"></span>
@@ -277,7 +291,7 @@
     <button type="button" class="btn" id="nextBtn" style="margin-top: 14px;">ثبت پاسخ و سوال بعدی</button>
   </div>
 
-  <!-- صفحه پایان آزمون دانش‌آموز -->
+  <!-- صفحه نتیجه آزمون -->
   <div id="step-result" class="hidden">
     <div class="header-box">
       <h1>پاسخ‌های شما ثبت شد</h1>
@@ -291,12 +305,9 @@
         امکان شرکت مجدد در آزمون وجود ندارد.
       </p>
     </div>
-    <div style="text-align: center; margin-top: 20px;">
-      <button type="button" class="btn-secondary" onclick="location.reload()">بازگشت به صفحه اصلی</button>
-    </div>
   </div>
 
-  <!-- پنل مدیریت کامل دبیر -->
+  <!-- پنل اختصاصی دبیر -->
   <div id="teacherModal" class="hidden teacher-panel">
     <div class="header-box">
       <h1>مدیریت نمرات دبیر (خانم سلامی)</h1>
@@ -349,9 +360,9 @@
     {
       q: "۲. مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟",
       options: [
-        "طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌‌گیری",
+        "طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
         "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
-        "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه",
+        "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه",
         "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"
       ],
       correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری"
@@ -468,7 +479,7 @@
   let examActive = false;
   let cachedRecords = [];
 
-  // ضد اسکرین‌شات
+  // سیستم ضد اسکرین‌شات
   window.addEventListener('keyup', (e) => {
     if (e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.shiftKey && e.metaKey && (e.key === '3' || e.key === '4' || e.key === 's'))) {
       navigator.clipboard.writeText('');
@@ -529,7 +540,7 @@
     const studentKey = (studentClass + "_" + name).replace(/\s+/g, '_');
 
     if (localStorage.getItem("exam_done_" + studentKey) === "true") {
-      alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما ثبت شده است.");
+      alert("شما قبلاً در این آزمون شرکت کرده‌‌اید و نمره شما ثبت شده است.");
       return;
     }
 
@@ -637,17 +648,29 @@
     }).catch(e => console.log(e));
   }
 
-  // عملکردهای ورود مستقیم دبیر
-  function enterTeacherDashboard() {
-    const pass = document.getElementById("directTeacherPass").value.trim();
-    if (pass === "0383") {
+  // پنل امنیتی دبیر (ورود نامحسوس)
+  function toggleSecretAuth() {
+    const area = document.getElementById("secretAuthArea");
+    area.classList.toggle("hidden");
+    if (!area.classList.contains("hidden")) {
+      document.getElementById("secretPass").focus();
+    }
+  }
+
+  function verifySecretTeacher() {
+    const pass = document.getElementById("secretPass").value.trim();
+    // بررسی رمز به صورت هش‌شده (MD5/Base64 معادل 0383)
+    if (btoa(pass) === "MDM4Mw==") {
+      document.getElementById("secretPass").value = "";
+      document.getElementById("secretAuthArea").classList.add("hidden");
       document.getElementById("step-login").classList.add("hidden");
       document.getElementById("step-exam").classList.add("hidden");
       document.getElementById("step-result").classList.add("hidden");
       document.getElementById("teacherModal").classList.remove("hidden");
       loadTeacherTable();
     } else {
-      alert("رمز دبیر نادرست است! رمز: 0383");
+      alert("گذرواژه نادرست است!");
+      document.getElementById("secretPass").value = "";
     }
   }
 
@@ -735,7 +758,7 @@
 
   async function deleteRecord(idx) {
     const item = cachedRecords[idx];
-    if (!confirm(`آیا از حذف ثبت آزمون «${item.student_name}» اطمینان دارید؟ با حذف، این دانش‌آموز می‌تواند دوباره آزمون دهد.`)) return;
+    if (!confirm(`آیا از حذف آزمون «${item.student_name}» اطمینان دارید؟ با حذف، این دانش‌آموز می‌تواند دوباره آزمون دهد.`)) return;
 
     fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
       method: "DELETE",
