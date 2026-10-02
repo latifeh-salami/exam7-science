@@ -11,7 +11,6 @@
   
   <style>
     :root {
-      --bg-pastel: #fbf7fd;
       --pink-soft: #ffb7d5;
       --pink-neon: #ff65a3;
       --purple-neon: #a855f7;
@@ -161,7 +160,7 @@
       height: 17px;
       cursor: pointer;
     }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
     .teacher-panel {
       margin-top: 25px;
       border-top: 2px dashed #d8b4fe;
@@ -211,7 +210,7 @@
     </div>
     <div class="welcome-card">
       🌸 دختر پرتلاشم، به آزمون علوم خوش اومدی!<br>
-      با آرامش و دقت به سوالات پاسخ بده؛ با انگیزه و تلاشی که داری قطعا می‌‌درخشی. برات آرزوی موفقیت دارم! ✨
+      با آرامش و دقت به سوالات پاسخ بده؛ با انگیزه و تلاشی که داری قطعا می‌درخشی. برات آرزوی موفقیت دارم! ✨
     </div>
     <div class="field-group">
       <label for="studentName">نام و نام خانوادگی:</label>
@@ -225,7 +224,7 @@
         <option value="هفتم ساحل">هفتم ساحل</option>
       </select>
     </div>
-    <button class="btn" onclick="startExam()">شروع آزمون (زمان: ۱۵ دقیقه)</button>
+    <button type="button" class="btn" onclick="startExam()">شروع آزمون (زمان: ۱۵ دقیقه)</button>
   </div>
 
   <div id="step-exam" class="hidden">
@@ -236,7 +235,7 @@
     <div id="questionProgress" style="font-size: 13px; color: #9333ea; font-weight: 700; margin-bottom: 8px;"></div>
     <div class="question-title" id="questionText"></div>
     <div id="optionsContainer"></div>
-    <button class="btn" style="margin-top: 14px;" onclick="nextQuestion()">ثبت پاسخ و سوال بعدی</button>
+    <button type="button" class="btn" style="margin-top: 14px;" onclick="nextQuestion()">ثبت پاسخ و سوال بعدی</button>
   </div>
 
   <div id="step-result" class="hidden">
@@ -256,7 +255,7 @@
     <div class="teacher-panel">
       <h3 style="font-size: 13.5px; color: var(--purple-dark); margin-bottom: 8px;">بخش مدیریت دبیر (خانم سلامی):</h3>
       <input type="password" id="teacherPass" placeholder="رمز ورود دبیر" style="width: 170px; padding: 6px; border-radius: 8px; border: 1px solid #c084fc; font-size: 13px;">
-      <button class="btn-secondary" onclick="fetchTeacherData()">دریافت نمرات</button>
+      <button type="button" class="btn-secondary" onclick="fetchTeacherData()">دریافت نمرات</button>
 
       <div id="teacherTableArea" class="hidden">
         <div id="printArea">
@@ -278,7 +277,7 @@
             <tbody id="teacherTableBody"></tbody>
           </table>
         </div>
-        <button class="btn-secondary" style="margin-top: 12px; background: #059669;" onclick="window.print()">🖨 چاپ نمرات (پرینت / دانلود PDF)</button>
+        <button type="button" class="btn-secondary" style="margin-top: 12px; background: #059669;" onclick="window.print()">🖨 چاپ نمرات (پرینت / دانلود PDF)</button>
       </div>
     </div>
   </div>
@@ -299,9 +298,9 @@
     {
       q: "۲. مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟",
       options: [
-        "طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
+        "طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
         "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری",
-        "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه",
+        "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه",
         "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"
       ],
       correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری"
@@ -309,7 +308,7 @@
     {
       q: "۳. مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟",
       options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌سازی", "جمع‌آوری اطلاعات"],
-      correct: "فرضیه‌سازی"
+      correct: "فرضیه‌‌سازی"
     },
     {
       q: "۴. در آزمایش انحلال‌پذیری کتاب درسی، کدام ماده پس از ریخته شدن در آب و هم‌زدن کاملاً در آب حل می‌شود؟",
@@ -364,7 +363,7 @@
     {
       q: "۱۱. هدف اصلی از طراحی و انجام یک «آزمایش» در روش علمی چیست؟",
       options: [
-        "تأیید حتمی پیش‌بینی‌ها بدون ثبت خطا",
+        "تأیید حتمی پیش‌‌بینی‌ها بدون ثبت خطا",
         "بررسی درستی یا نادرستی فرضیه و پیش‌بینی",
         "صرفاً جمع‌آوری وسایل آزمایشگاهی",
         "اثبات سریع حدس‌ها بدون تکرار"
@@ -416,7 +415,7 @@
     if (window.supabase) {
       supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
-  } catch(e) { console.log(e); }
+  } catch(e) {}
 
   let examQuestions = [];
   let currentQuestionIndex = 0;
@@ -440,7 +439,7 @@
     if (examActive && document.hidden) {
       cheatWarnings++;
       if (cheatWarnings >= 2) {
-        alert("⚠️ به دلیل خروج مکرر از صفحه آزمون، آزمون شما به پایان رسید و برگه به صورت خودکار ثبت شد!");
+        alert("⚠️️ به دلیل خروج مکرر از صفحه آزمون، آزمون شما به پایان رسید و برگه به صورت خودکار ثبت شد!");
         finishExam();
       } else {
         alert("⚠️ هشدار: خروج از صفحه آزمون غیرمجاز است! در صورت تکرار، آزمون شما بسته خواهد شد.");
@@ -449,8 +448,13 @@
   });
 
   function startExam() {
-    const name = document.getElementById("studentName").value.trim();
-    const studentClass = document.getElementById("studentClass").value;
+    const nameEl = document.getElementById("studentName");
+    const classEl = document.getElementById("studentClass");
+    
+    if (!nameEl || !classEl) return;
+    
+    const name = nameEl.value.trim();
+    const studentClass = classEl.value;
 
     if (!name || !studentClass) {
       alert("لطفاً هم نام و نام خانوادگی و هم کلاس خود را انتخاب کنید.");
@@ -460,7 +464,7 @@
     const studentKey = `${studentClass}_${name}`.replace(/\s+/g, '_');
 
     if (localStorage.getItem("exam_done_" + studentKey) === "true") {
-      alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما در سیستم ثبت شده است.");
+      alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما ثبت شده است.");
       return;
     }
 
@@ -468,13 +472,11 @@
     studentData.className = studentClass;
     studentData.key = studentKey;
 
-    examQuestions = shuffleArray(rawQuestions).map(q => {
-      return {
-        q: q.q,
-        options: shuffleArray(q.options),
-        correct: q.correct
-      };
-    });
+    examQuestions = shuffleArray(rawQuestions).map(q => ({
+      q: q.q,
+      options: shuffleArray(q.options),
+      correct: q.correct
+    }));
 
     document.getElementById("step-login").classList.add("hidden");
     document.getElementById("step-exam").classList.remove("hidden");
@@ -490,7 +492,10 @@
       timeLeft--;
       let m = Math.floor(timeLeft / 60);
       let s = timeLeft % 60;
-      document.getElementById("timer").innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      const tEl = document.getElementById("timer");
+      if (tEl) {
+        tEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      }
 
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
@@ -551,7 +556,6 @@
 
     localStorage.setItem("exam_done_" + studentData.key, "true");
 
-    const localList = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
     const record = {
       student_name: studentData.name,
       class_name: studentData.className,
@@ -560,15 +564,15 @@
       cheat_warnings: cheatWarnings,
       created_at: new Date().toISOString()
     };
+
+    const localList = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
     localList.push(record);
     localStorage.setItem("all_exam_results", JSON.stringify(localList));
 
     if (supabase) {
       try {
         await supabase.from('exam_science7_ch1').insert([record]);
-      } catch (e) {
-        console.error("خطا در ارسال آنلاین:", e);
-      }
+      } catch (e) {}
     }
   }
 
@@ -590,9 +594,7 @@
         if (!error && data && data.length > 0) {
           records = data;
         }
-      } catch (err) {
-        console.warn("استفاده از حافظه لوکال:", err);
-      }
+      } catch (err) {}
     }
 
     if (records.length === 0) {
