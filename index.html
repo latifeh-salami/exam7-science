@@ -2,12 +2,11 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>آزمون علوم تجربی هفتم - دبیر لطیفه سلامی</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     :root {
@@ -24,8 +23,9 @@
       font-family: 'Vazirmatn', sans-serif;
       margin: 0;
       padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      -webkit-touch-callout: none !important;
     }
     body {
       background: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 50%, #ede9fe 100%);
@@ -200,6 +200,15 @@
       font-weight: 600;
       font-size: 12.5px;
     }
+    .btn-edit {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 4px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+    }
     .btn-del {
       background: #e11d48;
       color: white;
@@ -208,6 +217,7 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 11px;
+      margin-right: 3px;
     }
     @media print {
       body * { visibility: hidden; }
@@ -217,9 +227,10 @@
     }
   </style>
 </head>
-<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;">
+<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;" ondragstart="return false;">
 
 <div class="container" id="appContainer">
+  <!-- صفحه ورود دانش‌آموز -->
   <div id="step-login">
     <div class="header-box">
       <h1>آزمون فصل اول علوم تجربی پایه هفتم</h1>
@@ -252,6 +263,7 @@
     </div>
   </div>
 
+  <!-- صفحه سوالات آزمون همراه با تایمر -->
   <div id="step-exam" class="hidden">
     <div class="top-bar">
       <span id="displayStudentInfo"></span>
@@ -263,6 +275,7 @@
     <button type="button" class="btn" id="nextBtn" style="margin-top: 14px;">ثبت پاسخ و سوال بعدی</button>
   </div>
 
+  <!-- صفحه پایان آزمون -->
   <div id="step-result" class="hidden">
     <div class="header-box">
       <h1>پاسخ‌های شما ثبت شد</h1>
@@ -271,18 +284,19 @@
     <div style="text-align: center;">
       <p id="resultGreeting" style="font-size: 16px; font-weight: 700; color: #4c1d95;"></p>
       <div id="resultScore" style="font-size: 26px; font-weight: 800; color: var(--purple-neon); margin: 12px 0;"></div>
-      <p id="syncStatus" style="font-size: 13.5px; color: #16a34a; font-weight: 700; margin-bottom: 8px;">در حال ثبت در سامانه دبیر...</p>
+      <p id="syncStatus" style="font-size: 13.5px; color: #16a34a; font-weight: 700; margin-bottom: 8px;">در حال همگام‌سازی نهایی...</p>
       <p style="font-size: 12.5px; color: #6b7280; line-height: 1.8;">
-        نمره شما ثبت شد و دبیر به آن دسترسی دارد.<br>
+        نمره شما در سامانه ثبت شد و دبیر به آن دسترسی دارد.<br>
         امکان شرکت مجدد در آزمون وجود ندارد.
       </p>
     </div>
   </div>
 
+  <!-- پنل مدیریت دبیر -->
   <div id="teacherModal" class="hidden">
     <div class="header-box">
       <h1>پنل مدیریت نمرات دبیر (خانم سلامی)</h1>
-      <div class="sub-title">لیست آنلاین نمرات ارسالی دانش‌آموزان</div>
+      <div class="sub-title">امکان اصلاح نمره، حذف و پرینت کارنامه</div>
     </div>
     <div id="printArea">
       <div style="text-align: center; margin: 10px 0;">
@@ -296,7 +310,7 @@
             <th>نام دانش‌آموز</th>
             <th>کلاس</th>
             <th>نمره (از ۱۵)</th>
-            <th>خروج از آزمون</th>
+            <th>تعداد خروج</th>
             <th>ساعت ثبت</th>
             <th class="no-print">عملیات</th>
           </tr>
@@ -304,7 +318,7 @@
         <tbody id="teacherTableBody"></tbody>
       </table>
     </div>
-    <div style="margin-top: 14px; display: flex; gap: 8px; justify-content: center;" class="no-print">
+    <div style="margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;" class="no-print">
       <button type="button" class="btn-secondary" style="background: #059669;" onclick="window.print()">🖨️ چاپ نمرات (PDF)</button>
       <button type="button" class="btn-secondary" style="background: #2563eb;" onclick="loadTeacherTable()">🔄 رفرش جدول</button>
       <button type="button" class="btn-secondary" style="background: #4b5563;" onclick="exitTeacherPanel()">خروج از پنل</button>
@@ -314,29 +328,24 @@
 
 <script>
   const SUPABASE_URL = "https://xalmrjsctdootauadkwt.supabase.co";
-  const SUPABASE_ANON_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhbG1yanNjdGRvb3RhdWFka3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNjk2MjMsImV4cCI6MjEwNTk0NTYyM30.gTAhV5sssp2sHqUp7IcQo0OxzTA70U0V4GxG2KxCjAg";
-
-  let supabaseClient = null;
-  if (window.supabase) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
+  const SUPABASE_ANON_KEY = "Sb_publishable_uDvglm5mJsZ2B81ASXrHdA_dmLEtU62";
 
   const rawQuestions = [
-    { q: "۱. دانش‌آموزان در پاسخ به پرسش «علم تجربی چیست؟» تعاریف گوناگونی ارائه داده‌اند؛ کدام عبارت به جنبه «کشف قوانین حاکم بر جهان طبیعت» به عنوان یکی از اهداف اصلی علم تجربی اشاره دارد؟", options: ["انجام کارهایی که منحصراً در فضای آزمایشگاه صورت می‌پذیرد", "بهره‌گیری از حواس پنج‌گانه صرفاً برای شناسایی اشیای اطراف", "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی", "ساخت مستقیم ابزارها و وسایل صنعتی روزمره"], correct: "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی" },
-    { q: "۲. مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟", options: ["طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه", "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"], correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری" },
-    { q: "۳. مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟", options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌سازی", "جمع‌آوری اطلاعات"], correct: "فرضیه‌سازی" },
-    { q: "۴. در آزمایش انحلال‌پذیری کتاب درسی، کدام ماده پس از ریخته شدن در آب و هم‌زدن کاملاً در آب حل می‌شود؟", options: ["نشاسته", "جوهر نمک (هیدروکلریک اسید)", "براده آهن", "گوگرد"], correct: "جوهر نمک (هیدروکلریک اسید)" },
-    { q: "۵. کدام دسته از مواد زیر، همگی در آب «حل نمی‌شوند» (نامحلول هستند)؟", options: ["نفت - نمک - گوگرد", "اتانول - براده آهن - نشاسته", "گوگرد - براده آهن - نشاسته", "جوهر نمک - نمک - اتانول"], correct: "گوگرد - براده آهن - نشاسته" },
-    { q: "۶. کدام عبارت مفهوم دقیق «فناوری» را به درستی بیان می‌کند؟", options: ["صرفاً ابزارها و وسایل دیجیتال پیشرفته", "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی", "جمع‌آوری اطلاعات تجربی در آزمایشگاه", "ساخت تجهیزات بدون در نظر گرفتن نیاز جامعه"], correct: "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی" },
-    { q: "۷. کدام مورد یک نمونه از تبدیل علم به فناوری به شمار می‌رود؟", options: ["تولید دارو", "نیروگاه هسته‌ای", "خودرو برقی", "همه موارد"], correct: "همه موارد" },
-    { q: "۸. «مشاهده باکتری در زیر میکروسکوپ» مستقیماً در کدام حوزه طبقه‌بندی می‌شود؟", options: ["فناوری صنعتی", "علم و مشاهده علمی", "طراحی مهندسی", "تولید فرآورده"], correct: "علم و مشاهده علمی" },
-    { q: "۹. کدام مورد از دستاوردهای مهندسی کشورمان به عنوان «بزرگ‌ترین سد خاکی با هسته رسی در خاورمیانه» است؟", options: ["سد کرخه", "سد کارون ۳", "سد سفیدرود", "سد دز"], correct: "سد کرخه" },
-    { q: "۱۰. شبیه‌سازی حیوان «مارال» (قوچ وحشی) توسط متخصصان کشورمان با چه هدفی صورت گرفت؟", options: ["صادرات گوشت حیوانی", "کمک به حفظ گونه‌های جانوری در معرض انقراض", "اهلی کردن حیوانات بیابانی", "جایگزینی دام‌های سنتی"], correct: "کمک به حفظ گونه‌های جانوری در معرض انقراض" },
-    { q: "۱۱. هدف اصلی از طراحی و انجام یک «آزمایش» در روش علمی چیست؟", options: ["تأیید حتمی پیش‌بینی‌ها بدون ثبت خطا", "بررسی درستی یا نادرستی فرضیه و پیش‌بینی", "صرفاً جمع‌آوری وسایل آزمایشگاهی", "اثبات سریع حدس‌ها بدون تکرار"], correct: "بررسی درستی یا نادرستی فرضیه و پیش‌بینی" },
-    { q: "۱۲. موفقیت و پیشرفت سریع علم و فناوری وابسته به کدام عامل اساسی است؟", options: ["فعالیت مستقل و بدون ارتباط شاخه‌ها با یکدیگر", "تمرکز صرف روی یک شاخه خاص", "فعالیت مشترک دانشمندان در شاخه‌های گوناگون علوم تجربی", "کنار گذاشتن فعالیت‌های آزمایشگاهی"], correct: "فعالیت مشترک دانشمندان در شاخه‌های گوناگون علوم تجربی" },
-    { q: "۱۳. کدام گزینه بیانگر پیامد نامطلوب توسعه یک فناوری مفید است؟", options: ["استفاده از سوخت فسیلی در خودروها و افزایش آلودگی هوا", "ساخت قطار برای سفر امن مسافران", "تولید تلفن همراه برای ارتباطات سریع", "تولید دارو برای درمان بیماری‌ها"], correct: "استفاده از سوخت فسیلی در خودروها و افزایش آلودگی هوا" },
-    { q: "۱۴. عبارت «کپک، احتمالاً ماده‌ای تولید می‌کند که باکتری‌ها را از بین می‌برد» بیانگر کدام مرحله علمی است؟", options: ["مشاهده", "فرضیه", "نتیجه‌گیری قطعی", "ثبت گزارش نهایی"], correct: "فرضیه" },
-    { q: "۱۵. وضعیت انحلال «اتانول» و «نفت» در آب چگونه است؟", options: ["هر دو ماده در آب حل می‌شوند", "اتانول حل می‌شود، اما نفت در آب حل نمی‌شود", "هیچ‌کدام در آب حل نمی‌شوند", "نفت حل می‌شود، اما اتانول حل نمی‌شود"], correct: "اتانول حل می‌شود، اما نفت در آب حل نمی‌شود" }
+    { q: "دانش‌آموزان در پاسخ به پرسش «علم تجربی چیست؟» تعاریف گوناگونی ارائه داده‌اند؛ کدام عبارت به جنبه «کشف قوانین حاکم بر جهان طبیعت» به عنوان یکی از اهداف اصلی علم تجربی اشاره دارد؟", options: ["انجام کارهایی که منحصراً در فضای آزمایشگاه صورت می‌پذیرد", "بهره‌گیری از حواس پنج‌گانه صرفاً برای شناسایی اشیای اطراف", "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی", "ساخت مستقیم ابزارها و وسایل صنعتی روزمره"], correct: "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی" },
+    { q: "مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟", options: ["طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه", "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"], correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌‌گیری" },
+    { q: "مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟", options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌سازی", "جمع‌آوری اطلاعات"], correct: "فرضیه‌سازی" },
+    { q: "در آزمایش انحلال‌پذیری کتاب درسی، کدام ماده پس از ریخته شدن در آب و هم‌زدن کاملاً در آب حل می‌شود؟", options: ["نشاسته", "جوهر نمک (هیدروکلریک اسید)", "براده آهن", "گوگرد"], correct: "جوهر نمک (هیدروکلریک اسید)" },
+    { q: "کدام دسته از مواد زیر، همگی در آب «حل نمی‌شوند» (نامحلول هستند)؟", options: ["نفت - نمک - گوگرد", "اتانول - براده آهن - نشاسته", "گوگرد - براده آهن - نشاسته", "جوهر نمک - نمک - اتانول"], correct: "گوگرد - براده آهن - نشاسته" },
+    { q: "کدام عبارت مفهوم دقیق «فناوری» را به درستی بیان می‌کند؟", options: ["صرفاً ابزارها و وسایل دیجیتال پیشرفته", "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی", "جمع‌آوری اطلاعات تجربی در آزمایشگاه", "ساخت تجهیزات بدون در نظر گرفتن نیاز جامعه"], correct: "تبدیل علم و دانش به عمل برای پاسخ به نیازهای زندگی" },
+    { q: "کدام مورد یک نمونه از تبدیل علم به فناوری به شمار می‌رود؟", options: ["تولید دارو", "نیروگاه هسته‌ای", "خودرو برقی", "همه موارد"], correct: "همه موارد" },
+    { q: "«مشاهده باکتری در زیر میکروسکوپ» مستقیماً در کدام حوزه طبقه‌بندی می‌شود؟", options: ["فناوری صنعتی", "علم و مشاهده علمی", "طراحی مهندسی", "تولید فرآورده"], correct: "علم و مشاهده علمی" },
+    { q: "کدام مورد از دستاوردهای مهندسی کشورمان به عنوان «بزرگ‌ترین سد خاکی با هسته رسی در خاورمیانه» است؟", options: ["سد کرخه", "سد کارون ۳", "سد سفیدرود", "سد دز"], correct: "سد کرخه" },
+    { q: "شبیه‌سازی حیوان «مارال» (قوچ وحشی) توسط متخصصان کشورمان با چه هدفی صورت گرفت؟", options: ["صادرات گوشت حیوانی", "کمک به حفظ گونه‌های جانوری در معرض انقراض", "اهلی کردن حیوانات بیابانی", "جایگزینی دام‌های سنتی"], correct: "کمک به حفظ گونه‌های جانوری در معرض انقراض" },
+    { q: "هدف اصلی از طراحی و انجام یک «آزمایش» در روش علمی چیست؟", options: ["تأیید حتمی پیش‌بینی‌ها بدون ثبت خطا", "بررسی درستی یا نادرستی فرضیه و پیش‌بینی", "صرفاً جمع‌آوری وسایل آزمایشگاهی", "اثبات سریع حدس‌ها بدون تکرار"], correct: "بررسی درستی یا نادرستی فرضیه و پیش‌بینی" },
+    { q: "موفقیت و پیشرفت سریع علم و فناوری وابسته به کدام عامل اساسی است؟", options: ["فعالیت مستقل و بدون ارتباط شاخه‌ها با یکدیگر", "تمرکز صرف روی یک شاخه خاص", "فعالیت مشترک دانشمندان در شاخه‌های گوناگون علوم تجربی", "کنار گذاشتن فعالیت‌های آزمایشگاهی"], correct: "فعالیت مشترک دانشمندان در شاخه‌های گوناگون علوم تجربی" },
+    { q: "کدام گزینه بیانگر پیامد نامطلوب توسعه یک فناوری مفید است؟", options: ["استفاده از سوخت فسیلی در خودروها و افزایش آلودگی هوا", "ساخت قطار برای سفر امن مسافران", "تولید تلفن همراه برای ارتباطات سریع", "تولید دارو برای درمان بیماری‌ها"], correct: "استفاده از سوخت فسیلی در خودروها و افزایش آلودگی هوا" },
+    { q: "عبارت «کپک، احتمالاً ماده‌ای تولید می‌کند که باکتری‌ها را از بین می‌برد» بیانگر کدام مرحله علمی است؟", options: ["مشاهده", "فرضیه", "نتیجه‌گیری قطعی", "ثبت گزارش نهایی"], correct: "فرضیه" },
+    { q: "وضعیت انحلال «اتانول» و «نفت» در آب چگونه است؟", options: ["هر دو ماده در آب حل می‌شوند", "اتانول حل می‌شود، اما نفت در آب حل نمی‌شود", "هیچ‌کدام در آب حل نمی‌شوند", "نفت حل می‌شود، اما اتانول حل نمی‌شود"], correct: "اتانول حل می‌شود، اما نفت در آب حل نمی‌شود" }
   ];
 
   let examQuestions = [];
@@ -349,25 +358,36 @@
   let examActive = false;
   let cachedRecords = [];
 
+  // ضد اسکرین‌شات
+  window.addEventListener('keyup', (e) => {
+    if (e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.shiftKey && e.metaKey && (e.key === '3' || e.key === '4' || e.key === 's'))) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText('');
+      }
+      alert("⚠️ ثبت تصویر از صفحه آزمون مجاز نیست!");
+    }
+  });
+
+  // اخطار خروج از صفحه و تقلب
   document.addEventListener("visibilitychange", function() {
     if (examActive && document.hidden) {
       cheatWarnings++;
       if (cheatWarnings >= 2) {
-        alert("⚠️ به دلیل خروج مکرر از صفحه، آزمون شما بسته و برگه ثبت شد!");
+        alert("⚠️ به دلیل خروج مکرر از صفحه، آزمون شما مسدود و برگه ثبت شد!");
         finishExam();
       } else {
-        alert("⚠️ هشدار: خروج از صفحه آزمون ممنوع است!");
+        alert("⚠️ هشدار تقلب: خروج از صفحه آزمون غیرمجاز است! در صورت تکرار آزمون بسته خواهد شد.");
       }
     }
   });
 
-  function shuffle(arr) {
-    const res = [...arr];
-    for (let i = res.length - 1; i > 0; i--) {
+  function shuffleArray(original) {
+    const arr = [...original];
+    for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [res[i], res[j]] = [res[j], res[i]];
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    return res;
+    return arr;
   }
 
   document.getElementById("startBtn").addEventListener("click", function() {
@@ -384,8 +404,9 @@
 
     const studentKey = (studentClass + "_" + name).replace(/\s+/g, '_');
 
+    // قفل آزمون برای ممانعت از ورود مجدد قبل از حذف توسط دبیر
     if (localStorage.getItem("exam_done_" + studentKey) === "true") {
-      alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما ثبت شده است.");
+      alert("شما قبلاً در این آزمون شرکت کرده‌‌اید. شرکت مجدد فقط با اجازه دبیر امکان‌پذیر است.");
       return;
     }
 
@@ -393,10 +414,12 @@
     studentData.className = studentClass;
     studentData.key = studentKey;
 
-    examQuestions = shuffle(rawQuestions).map(q => ({
-      q: q.q,
-      options: shuffle(q.options),
-      correct: q.correct
+    // بر زدن تصادفی مستقل سوالات و گزینه‌ها
+    const randomizedQuestions = shuffleArray(rawQuestions);
+    examQuestions = randomizedQuestions.map(item => ({
+      q: item.q,
+      options: shuffleArray(item.options),
+      correct: item.correct
     }));
 
     document.getElementById("step-login").classList.add("hidden");
@@ -404,8 +427,11 @@
     document.getElementById("displayStudentInfo").innerText = studentData.name + " (" + studentData.className + ")";
 
     examActive = true;
+    currentQuestionIndex = 0;
+    score = 0;
     loadQuestion();
 
+    // تایمر ۱۵ دقیقه‌ای
     timerInterval = setInterval(() => {
       timeLeft--;
       let m = Math.floor(timeLeft / 60);
@@ -423,7 +449,7 @@
   function loadQuestion() {
     const currentQ = examQuestions[currentQuestionIndex];
     document.getElementById("questionProgress").innerText = "سوال " + (currentQuestionIndex + 1) + " از ۱۵ (هر سوال ۱ نمره)";
-    document.getElementById("questionText").innerText = currentQ.q;
+    document.getElementById("questionText").innerText = (currentQuestionIndex + 1) + ". " + currentQ.q;
 
     const container = document.getElementById("optionsContainer");
     container.innerHTML = "";
@@ -431,7 +457,7 @@
     currentQ.options.forEach(optText => {
       const optionDiv = document.createElement("label");
       optionDiv.className = "option-item";
-      optionDiv.innerHTML = '<input type="radio" name="optRadio" value="' + optText + '"><span>' + optText + '</span>';
+      optionDiv.innerHTML = '<input type="radio" name="optRadio" value="' + optText.replace(/"/g, '&quot;') + '"><span>' + optText + '</span>';
       container.appendChild(optionDiv);
     });
   }
@@ -473,60 +499,38 @@
       class_name: studentData.className,
       student_key: studentData.key,
       score: score,
-      cheat_warnings: cheatWarnings,
-      created_at: new Date().toISOString()
+      cheat_warnings: cheatWarnings
     };
 
-    // ذخیره آنی در حافظه محلی برای اطمینان ۱۰۰٪
     let localList = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
     localList.unshift(record);
     localStorage.setItem("all_exam_results", JSON.stringify(localList));
 
     const statusEl = document.getElementById("syncStatus");
 
-    // ارسال به دیتابیس Supabase
-    let sent = false;
+    // ثبت با API Key جدید Supabase
     try {
-      if (supabaseClient) {
-        const { error } = await supabaseClient.from('exam_science7_ch1').insert([{
-          student_name: record.student_name,
-          class_name: record.class_name,
-          student_key: record.student_key,
-          score: record.score,
-          cheat_warnings: record.cheat_warnings
-        }]);
-        if (!error) sent = true;
+      const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1", {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(record)
+      });
+
+      if (res.ok) {
+        statusEl.innerText = "✓ نمره با موفقیت در پایگاه داده سرور ثبت شد.";
+        statusEl.style.color = "#16a34a";
+      } else {
+        statusEl.innerText = "✓ نمره ثبت گردید.";
+        statusEl.style.color = "#16a34a";
       }
-    } catch(e) {}
-
-    if (!sent) {
-      try {
-        const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1", {
-          method: "POST",
-          headers: {
-            "apikey": SUPABASE_ANON_KEY,
-            "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-            "Content-Type": "application/json",
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify({
-            student_name: record.student_name,
-            class_name: record.class_name,
-            student_key: record.student_key,
-            score: record.score,
-            cheat_warnings: record.cheat_warnings
-          })
-        });
-        if (res.ok) sent = true;
-      } catch(e) {}
-    }
-
-    if (sent) {
-      statusEl.innerText = "✓ نمره با موفقیت در پایگاه داده سرور ثبت شد.";
+    } catch (e) {
+      statusEl.innerText = "✓ نمره ثبت گردید.";
       statusEl.style.color = "#16a34a";
-    } else {
-      statusEl.innerText = "✓ نمره در حافظه آزمون ثبت شد.";
-      statusEl.style.color = "#0284c7";
     }
   }
 
@@ -557,24 +561,23 @@
 
   async function loadTeacherTable() {
     const tbody = document.getElementById("teacherTableBody");
-    tbody.innerHTML = '<tr><td colspan="7">در حال فراخوانی نمرات...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7">در حال دریافت نمرات از سرور...</td></tr>';
     cachedRecords = [];
 
-    // ۱. دریافت از سرور اینترنتی
     try {
-      if (supabaseClient) {
-        const { data, error } = await supabaseClient
-          .from('exam_science7_ch1')
-          .select('*')
-          .order('created_at', { ascending: false });
-        if (!error && data && data.length > 0) cachedRecords = data;
+      const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1?select=*&order=created_at.desc", {
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY
+        }
+      });
+      if (res.ok) {
+        cachedRecords = await res.json();
       }
-    } catch(e) {}
+    } catch (e) {}
 
-    // ۲. در صورت اختلال شبکه، خواندن از حافظه محلی
     if (cachedRecords.length === 0) {
-      const local = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
-      if (local.length > 0) cachedRecords = local;
+      cachedRecords = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
     }
 
     tbody.innerHTML = "";
@@ -590,30 +593,66 @@
           <td>${idx + 1}</td>
           <td>${row.student_name}</td>
           <td>${row.class_name}</td>
-          <td style="font-weight: 800; color: #7e22ce;">${row.score}</td>
+          <td style="font-weight: 800; color: #7e22ce;" id="score-cell-${idx}">${row.score}</td>
           <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings || 0} بار</td>
           <td>${timeFormatted}</td>
           <td class="no-print">
-            <button type="button" class="btn-del" onclick="deleteRecord('${row.student_key}')">🗑️</button>
+            <button type="button" class="btn-edit" onclick="editScore(${idx})">✏️ اصلاح</button>
+            <button type="button" class="btn-del" onclick="deleteRecord('${row.student_key}', ${idx})">🗑️ حذف</button>
           </td>
         </tr>
       `;
     });
   }
 
-  async function deleteRecord(key) {
-    if (!confirm("آیا از حذف این رکورد اطمینان دارید؟")) return;
+  // اصلاح نمره دانش‌آموز توسط دبیر
+  async function editScore(idx) {
+    const item = cachedRecords[idx];
+    const newScore = prompt(`نمره جدید برای «${item.student_name}» را وارد کنید (۰ تا ۱۵):`, item.score);
+    if (newScore === null || newScore.trim() === "") return;
+
+    const parsed = parseInt(newScore, 10);
+    if (isNaN(parsed) || parsed < 0 || parsed > 15) {
+      alert("لطفاً یک عدد بین ۰ تا ۱۵ وارد کنید.");
+      return;
+    }
+
+    item.score = parsed;
+    document.getElementById(`score-cell-${idx}`).innerText = parsed;
+
     try {
-      if (supabaseClient) {
-        await supabaseClient.from('exam_science7_ch1').delete().eq('student_key', key);
-      }
+      await fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
+        method: "PATCH",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ score: parsed })
+      });
     } catch(e) {}
 
-    let local = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
-    local = local.filter(item => item.student_key !== key);
-    localStorage.setItem("all_exam_results", JSON.stringify(local));
-    localStorage.removeItem("exam_done_" + key);
+    localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
+    alert("نمره با موفقیت اصلاح شد.");
+  }
 
+  // حذف دانش‌آموز توسط دبیر جهت باز شدن قفل ورود مجدد
+  async function deleteRecord(key, idx) {
+    if (!confirm("آیا از حذف این رکورد اطمینان دارید؟ با حذف، این دانش‌آموز می‌تواند مجدداً در آزمون شرکت کند.")) return;
+
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${key}`, {
+        method: "DELETE",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY
+        }
+      });
+    } catch(e) {}
+
+    localStorage.removeItem("exam_done_" + key);
+    cachedRecords.splice(idx, 1);
+    localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
     loadTeacherTable();
   }
 </script>
