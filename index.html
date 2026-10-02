@@ -25,6 +25,7 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
     body {
       background: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 50%, #ede9fe 100%);
@@ -35,9 +36,14 @@
       align-items: center;
       padding: 16px;
     }
+    .blur-screen {
+      filter: blur(25px) !important;
+      opacity: 0.05 !important;
+      pointer-events: none !important;
+    }
     .container {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       background: var(--card-bg);
       border: 3px solid var(--pink-soft);
       border-radius: 28px;
@@ -61,6 +67,19 @@
       font-size: 14px;
       color: var(--pink-neon);
       font-weight: 700;
+    }
+    .teacher-direct-btn {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      background: #f3e8ff;
+      border: 1px solid #c084fc;
+      color: var(--purple-dark);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 10px;
+      cursor: pointer;
     }
     .welcome-card {
       background: linear-gradient(135deg, #fff0f7, #f5edff);
@@ -161,9 +180,9 @@
     }
     .hidden { display: none !important; }
     .teacher-panel {
-      margin-top: 25px;
+      margin-top: 15px;
       border-top: 2px dashed #d8b4fe;
-      padding-top: 18px;
+      padding-top: 15px;
     }
     .teacher-table {
       width: 100%;
@@ -192,24 +211,45 @@
       font-weight: 600;
       font-size: 13px;
     }
+    .btn-edit {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .btn-del {
+      background: #e11d48;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      margin-right: 4px;
+    }
     @media print {
       body * { visibility: hidden; }
       #printArea, #printArea * { visibility: visible; }
       #printArea { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
     }
   </style>
 </head>
-<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;">
+<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;" ondragstart="return false;">
 
-<div class="container">
+<div class="container" id="appContainer">
   <div id="step-login">
+    <button type="button" class="teacher-direct-btn" onclick="openTeacherAuth()">ورود دبیر 🔒</button>
     <div class="header-box">
       <h1>آزمون فصل اول علوم تجربی پایه هفتم</h1>
       <div class="sub-title">مدرسه زینب کبری • دبیر: لطیفه سلامی</div>
     </div>
     <div class="welcome-card">
       🌸 دختر پرتلاشم، به آزمون علوم خوش اومدی!<br>
-      با آرامش و دقت به سوالات پاسخ بده؛ با انگیزه و تلاشی که داری قطعا می‌‌درخشی. برات آرزوی موفقیت دارم! ✨
+      با آرامش و دقت به سوالات پاسخ بده؛ با انگیزه و تلاشی که داری قطعا می‌درخشی. برات آرزوی موفقیت دارم! ✨
     </div>
     <div class="field-group">
       <label for="studentName">نام و نام خانوادگی:</label>
@@ -250,33 +290,37 @@
         امکان شرکت مجدد در آزمون وجود ندارد.
       </p>
     </div>
+  </div>
 
-    <div class="teacher-panel">
-      <h3 style="font-size: 13.5px; color: var(--purple-dark); margin-bottom: 8px;">بخش مدیریت دبیر (خانم سلامی):</h3>
-      <input type="password" id="teacherPass" placeholder="رمز ورود دبیر" style="width: 170px; padding: 6px; border-radius: 8px; border: 1px solid #c084fc; font-size: 13px;">
-      <button type="button" class="btn-secondary" id="fetchTeacherBtn">دریافت نمرات</button>
-
-      <div id="teacherTableArea" class="hidden">
-        <div id="printArea">
-          <div style="text-align: center; margin: 15px 0 10px 0;">
-            <h2 style="font-size: 16.5px; font-weight: 800;">کارنامه آزمون فصل اول علوم تجربی هفتم - مدرسه زینب کبری</h2>
-            <p style="font-size: 13px;">دبیر مربوطه: لطیفه سلامی</p>
-          </div>
-          <table class="teacher-table">
-            <thead>
-              <tr>
-                <th>ردیف</th>
-                <th>نام و نام خانوادگی</th>
-                <th>کلاس</th>
-                <th>نمره (از ۱۵)</th>
-                <th>تعداد خروج از صفحه</th>
-                <th>ساعت ثبت</th>
-              </tr>
-            </thead>
-            <tbody id="teacherTableBody"></tbody>
-          </table>
+  <div id="teacherModal" class="hidden teacher-panel">
+    <div class="header-box">
+      <h1>پنل مدیریت نمرات دبیر (خانم سلامی)</h1>
+      <div class="sub-title">امکان بازبینی، ویرایش نمره، حذف و چاپ کارنامه</div>
+    </div>
+    <div id="teacherTableArea">
+      <div id="printArea">
+        <div style="text-align: center; margin: 15px 0 10px 0;">
+          <h2 style="font-size: 16.5px; font-weight: 800;">کارنامه آزمون فصل اول علوم تجربی هفتم - مدرسه زینب کبری</h2>
+          <p style="font-size: 13px;">دبیر مربوطه: لطیفه سلامی</p>
         </div>
-        <button type="button" class="btn-secondary" style="margin-top: 12px; background: #059669;" onclick="window.print()">🖨 چاپ نمرات (پرینت / دانلود PDF)</button>
+        <table class="teacher-table">
+          <thead>
+            <tr>
+              <th>ردیف</th>
+              <th>نام و نام خانوادگی</th>
+              <th>کلاس</th>
+              <th>نمره (از ۱۵)</th>
+              <th>خروج از صفحه</th>
+              <th>ساعت ثبت</th>
+              <th class="no-print">عملیات دبیر</th>
+            </tr>
+          </thead>
+          <tbody id="teacherTableBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button type="button" class="btn-secondary" style="background: #059669;" onclick="window.print()">🖨️ چاپ نمرات (پرینت / PDF)</button>
+        <button type="button" class="btn-secondary" style="background: #4b5563;" onclick="exitTeacherPanel()">بازگشت به صفحه اصلی</button>
       </div>
     </div>
   </div>
@@ -291,7 +335,7 @@
       q: "۱. دانش‌آموزان در پاسخ به پرسش «علم تجربی چیست؟» تعاریف گوناگونی ارائه داده‌اند؛ کدام عبارت به جنبه «کشف قوانین حاکم بر جهان طبیعت» به عنوان یکی از اهداف اصلی علم تجربی اشاره دارد؟",
       options: [
         "انجام کارهایی که منحصراً در فضای آزمایشگاه صورت می‌پذیرد",
-        "بهره‌گیری از حواس پنج‌‌گانه صرفاً برای شناسایی اشیای اطراف",
+        "بهره‌گیری از حواس پنج‌گانه صرفاً برای شناسایی اشیای اطراف",
         "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی",
         "ساخت مستقیم ابزارها و وسایل صنعتی روزمره"
       ],
@@ -417,6 +461,44 @@
   let studentData = { name: "", className: "", key: "" };
   let cheatWarnings = 0;
   let examActive = false;
+  let cachedRecords = [];
+
+  // ضد اسکرین‌شات و ضد تقلب
+  window.addEventListener('keyup', (e) => {
+    if (e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.shiftKey && e.metaKey && (e.key === '3' || e.key === '4' || e.key === 's'))) {
+      navigator.clipboard.writeText('');
+      triggerScreenShield();
+    }
+  });
+
+  window.addEventListener('blur', () => {
+    if (examActive) triggerScreenShield();
+  });
+
+  window.addEventListener('focus', () => {
+    document.getElementById("appContainer").classList.remove("blur-screen");
+  });
+
+  function triggerScreenShield() {
+    const container = document.getElementById("appContainer");
+    container.classList.add("blur-screen");
+    setTimeout(() => {
+      container.classList.remove("blur-screen");
+    }, 2000);
+  }
+
+  document.addEventListener("visibilitychange", function() {
+    if (examActive && document.hidden) {
+      cheatWarnings++;
+      triggerScreenShield();
+      if (cheatWarnings >= 2) {
+        alert("⚠️ به دلیل خروج مکرر از صفحه، آزمون خاتمه یافته و برگه ثبت گردید!");
+        finishExam();
+      } else {
+        alert("⚠️ هشدار تقلب: هرگونه خروج از صفحه یا ثبت تصویر ممنوع است!");
+      }
+    }
+  });
 
   function shuffle(arr) {
     const res = [...arr];
@@ -426,18 +508,6 @@
     }
     return res;
   }
-
-  document.addEventListener("visibilitychange", function() {
-    if (examActive && document.hidden) {
-      cheatWarnings++;
-      if (cheatWarnings >= 2) {
-        alert("⚠️ به دلیل خروج مکرر از صفحه آزمون، آزمون شما به پایان رسید و برگه به صورت خودکار ثبت شد!");
-        finishExam();
-      } else {
-        alert("⚠️ هشدار: خروج از صفحه آزمون غیرمجاز است! در صورت تکرار، آزمون شما بسته خواهد شد.");
-      }
-    }
-  });
 
   document.getElementById("startBtn").addEventListener("click", function() {
     const nameInput = document.getElementById("studentName");
@@ -454,7 +524,7 @@
     const studentKey = (studentClass + "_" + name).replace(/\s+/g, '_');
 
     if (localStorage.getItem("exam_done_" + studentKey) === "true") {
-      alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما در سیستم ثبت شده است.");
+      alert("شما قبلاً در این آزمون شرکت کرده‌اید و نمره شما ثبت شده است.");
       return;
     }
 
@@ -562,15 +632,27 @@
     }).catch(e => console.log(e));
   }
 
-  document.getElementById("fetchTeacherBtn").addEventListener("click", async function() {
-    const pass = document.getElementById("teacherPass").value;
-    if (pass !== "0383") {
+  // بخش مدیریت و ورود مستقیم دبیر
+  function openTeacherAuth() {
+    const pass = prompt("لطفاً رمز ورود دبیر را وارد نمایید:");
+    if (pass === "0383") {
+      document.getElementById("step-login").classList.add("hidden");
+      document.getElementById("step-exam").classList.add("hidden");
+      document.getElementById("step-result").classList.add("hidden");
+      document.getElementById("teacherModal").classList.remove("hidden");
+      loadTeacherTable();
+    } else if (pass !== null) {
       alert("رمز دبیر نادرست است!");
-      return;
     }
+  }
 
-    let records = [];
+  function exitTeacherPanel() {
+    document.getElementById("teacherModal").classList.add("hidden");
+    document.getElementById("step-login").classList.remove("hidden");
+  }
 
+  async function loadTeacherTable() {
+    cachedRecords = [];
     try {
       const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1?select=*&order=created_at.desc", {
         headers: {
@@ -579,37 +661,95 @@
         }
       });
       if (res.ok) {
-        records = await res.json();
+        cachedRecords = await res.json();
       }
     } catch(e) {}
 
-    if (!records || records.length === 0) {
-      records = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
+    if (!cachedRecords || cachedRecords.length === 0) {
+      cachedRecords = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
     }
 
+    renderTable();
+  }
+
+  function renderTable() {
     const tbody = document.getElementById("teacherTableBody");
     tbody.innerHTML = "";
 
-    if (!records || records.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6">هنوز نمره‌ای ثبت نشده است.</td></tr>';
-    } else {
-      records.forEach((row, idx) => {
-        const timeFormatted = new Date(row.created_at).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-        tbody.innerHTML += `
-          <tr>
-            <td>${idx + 1}</td>
-            <td>${row.student_name}</td>
-            <td>${row.class_name}</td>
-            <td style="font-weight: 800; color: #7e22ce;">${row.score}</td>
-            <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings || 0} بار</td>
-            <td>${timeFormatted}</td>
-          </tr>
-        `;
-      });
+    if (!cachedRecords || cachedRecords.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7">هنوز نمره‌ای ثبت نشده است.</td></tr>';
+      return;
     }
 
-    document.getElementById("teacherTableArea").classList.remove("hidden");
-  });
+    cachedRecords.forEach((row, idx) => {
+      const timeFormatted = new Date(row.created_at).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+      tbody.innerHTML += `
+        <tr>
+          <td>${idx + 1}</td>
+          <td>${row.student_name}</td>
+          <td>${row.class_name}</td>
+          <td style="font-weight: 800; color: #7e22ce;" id="score-val-${idx}">${row.score}</td>
+          <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings || 0} بار</td>
+          <td>${timeFormatted}</td>
+          <td class="no-print">
+            <button class="btn-edit" onclick="editScore(${idx})">✏️ اصلاح نمره</button>
+            <button class="btn-del" onclick="deleteRecord(${idx})">🗑️ حذف</button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  async function editScore(idx) {
+    const item = cachedRecords[idx];
+    const newScore = prompt(`نمره جدید برای «${item.student_name}» را وارد کنید (۰ تا ۱۵):`, item.score);
+    if (newScore === null || newScore.trim() === "") return;
+
+    const parsed = parseInt(newScore, 10);
+    if (isNaN(parsed) || parsed < 0 || parsed > 15) {
+      alert("لطفاً یک نمره معتبر بین ۰ تا ۱۵ وارد کنید.");
+      return;
+    }
+
+    item.score = parsed;
+    document.getElementById(`score-val-${idx}`).innerText = parsed;
+
+    // آپدیت در Supabase
+    fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
+      method: "PATCH",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ score: parsed })
+    }).catch(e => console.log(e));
+
+    // آپدیت لوکال
+    localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
+    alert("نمره با موفقیت اصلاح شد.");
+  }
+
+  async function deleteRecord(idx) {
+    const item = cachedRecords[idx];
+    if (!confirm(`آیا مطمئن هستید که می‌خواهید ثبت نمره «${item.student_name}» را حذف کنید؟ با این کار او می‌تواند مجدداً در آزمون شرکت کند.`)) return;
+
+    // حذف از Supabase
+    fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
+      method: "DELETE",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": "Bearer " + SUPABASE_ANON_KEY
+      }
+    }).catch(e => console.log(e));
+
+    // رفع بلاک شرکت مجدد
+    localStorage.removeItem("exam_done_" + item.student_key);
+
+    cachedRecords.splice(idx, 1);
+    localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
+    renderTable();
+  }
 </script>
 
 </body>
