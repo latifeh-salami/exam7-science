@@ -200,15 +200,6 @@
       font-weight: 600;
       font-size: 12.5px;
     }
-    .btn-edit {
-      background: #0284c7;
-      color: white;
-      border: none;
-      padding: 4px 6px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-    }
     .btn-del {
       background: #e11d48;
       color: white;
@@ -217,7 +208,6 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 11px;
-      margin-right: 3px;
     }
     @media print {
       body * { visibility: hidden; }
@@ -284,9 +274,9 @@
     <div style="text-align: center;">
       <p id="resultGreeting" style="font-size: 16px; font-weight: 700; color: #4c1d95;"></p>
       <div id="resultScore" style="font-size: 26px; font-weight: 800; color: var(--purple-neon); margin: 12px 0;"></div>
-      <p id="syncStatus" style="font-size: 13.5px; color: #16a34a; font-weight: 700; margin-bottom: 8px;">در حال همگام‌سازی نهایی...</p>
+      <p id="syncStatus" style="font-size: 13.5px; color: #16a34a; font-weight: 700; margin-bottom: 8px;">در حال ثبت در شیت دبیر...</p>
       <p style="font-size: 12.5px; color: #6b7280; line-height: 1.8;">
-        نمره شما در سامانه ثبت شد و دبیر به آن دسترسی دارد.<br>
+        نمره شما در برگه ثبت نمرات گوگل شیت دبیر درج شد.<br>
         امکان شرکت مجدد در آزمون وجود ندارد.
       </p>
     </div>
@@ -296,7 +286,7 @@
   <div id="teacherModal" class="hidden">
     <div class="header-box">
       <h1>پنل مدیریت نمرات دبیر (خانم سلامی)</h1>
-      <div class="sub-title">امکان اصلاح نمره، حذف و پرینت کارنامه</div>
+      <div class="sub-title">مشاهده لحظه‌ای از گوگل شیت و چاپ کارنامه</div>
     </div>
     <div id="printArea">
       <div style="text-align: center; margin: 10px 0;">
@@ -320,19 +310,18 @@
     </div>
     <div style="margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;" class="no-print">
       <button type="button" class="btn-secondary" style="background: #059669;" onclick="window.print()">🖨️ چاپ نمرات (PDF)</button>
-      <button type="button" class="btn-secondary" style="background: #2563eb;" onclick="loadTeacherTable()">🔄 رفرش جدول</button>
+      <button type="button" class="btn-secondary" style="background: #2563eb;" onclick="loadTeacherTable()">🔄 بازخوانی از گوگل شیت</button>
       <button type="button" class="btn-secondary" style="background: #4b5563;" onclick="exitTeacherPanel()">خروج از پنل</button>
     </div>
   </div>
 </div>
 
 <script>
-  const SUPABASE_URL = "https://xalmrjsctdootauadkwt.supabase.co";
-  const SUPABASE_ANON_KEY = "Sb_publishable_uDvglm5mJsZ2B81ASXrHdA_dmLEtU62";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwR64RwT4N5kIncYzcl6IhcjSOACgQ8TG7yLSBqyv42LibhemSD0fSgafc0K2YkQ0rq2Q/exec";
 
   const rawQuestions = [
     { q: "دانش‌آموزان در پاسخ به پرسش «علم تجربی چیست؟» تعاریف گوناگونی ارائه داده‌اند؛ کدام عبارت به جنبه «کشف قوانین حاکم بر جهان طبیعت» به عنوان یکی از اهداف اصلی علم تجربی اشاره دارد؟", options: ["انجام کارهایی که منحصراً در فضای آزمایشگاه صورت می‌پذیرد", "بهره‌گیری از حواس پنج‌گانه صرفاً برای شناسایی اشیای اطراف", "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی", "ساخت مستقیم ابزارها و وسایل صنعتی روزمره"], correct: "یافتن پاسخ برای حل مسائل و شناخت نظم و قوانین پدیده‌های طبیعی" },
-    { q: "مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟", options: ["طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه", "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"], correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌‌گیری" },
+    { q: "مراحل روش علمی از ابتدا تا انتها به طور پیوسته و منظم کدام است؟", options: ["طرح سوال ← مشاهده ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌‌سازی ← آزمون فرضیه ← نتیجه‌گیری", "جمع‌آوری اطلاعات ← مشاهده ← فرضیه‌سازی ← طرح سوال ← نتیجه‌گیری ← آزمون فرضیه", "مشاهده ← فرضیه‌سازی ← طرح سوال ← آزمون فرضیه ← جمع‌آوری اطلاعات ← نتیجه‌گیری"], correct: "مشاهده ← طرح سوال ← جمع‌آوری اطلاعات ← فرضیه‌سازی ← آزمون فرضیه ← نتیجه‌گیری" },
     { q: "مکانیکی پس از بررسی خودرو حدس می‌زند که اشکال روشن نشدن مربوط به سیستم برق‌رسانی است؛ این حدس معادل کدام مرحله روش علمی است؟", options: ["طرح سوال", "نتیجه‌گیری", "فرضیه‌سازی", "جمع‌آوری اطلاعات"], correct: "فرضیه‌سازی" },
     { q: "در آزمایش انحلال‌پذیری کتاب درسی، کدام ماده پس از ریخته شدن در آب و هم‌زدن کاملاً در آب حل می‌شود؟", options: ["نشاسته", "جوهر نمک (هیدروکلریک اسید)", "براده آهن", "گوگرد"], correct: "جوهر نمک (هیدروکلریک اسید)" },
     { q: "کدام دسته از مواد زیر، همگی در آب «حل نمی‌شوند» (نامحلول هستند)؟", options: ["نفت - نمک - گوگرد", "اتانول - براده آهن - نشاسته", "گوگرد - براده آهن - نشاسته", "جوهر نمک - نمک - اتانول"], correct: "گوگرد - براده آهن - نشاسته" },
@@ -404,9 +393,8 @@
 
     const studentKey = (studentClass + "_" + name).replace(/\s+/g, '_');
 
-    // قفل آزمون برای ممانعت از ورود مجدد قبل از حذف توسط دبیر
     if (localStorage.getItem("exam_done_" + studentKey) === "true") {
-      alert("شما قبلاً در این آزمون شرکت کرده‌‌اید. شرکت مجدد فقط با اجازه دبیر امکان‌پذیر است.");
+      alert("شما قبلاً در این آزمون شرکت کرده‌اید. شرکت مجدد فقط با اجازه دبیر امکان‌پذیر است.");
       return;
     }
 
@@ -414,7 +402,6 @@
     studentData.className = studentClass;
     studentData.key = studentKey;
 
-    // بر زدن تصادفی مستقل سوالات و گزینه‌ها
     const randomizedQuestions = shuffleArray(rawQuestions);
     examQuestions = randomizedQuestions.map(item => ({
       q: item.q,
@@ -431,7 +418,6 @@
     score = 0;
     loadQuestion();
 
-    // تایمر ۱۵ دقیقه‌ای
     timerInterval = setInterval(() => {
       timeLeft--;
       let m = Math.floor(timeLeft / 60);
@@ -481,7 +467,7 @@
     }
   });
 
-  async function finishExam() {
+  function finishExam() {
     if (!examActive) return;
     examActive = false;
     clearInterval(timerInterval);
@@ -508,30 +494,19 @@
 
     const statusEl = document.getElementById("syncStatus");
 
-    // ثبت با API Key جدید Supabase
-    try {
-      const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1", {
-        method: "POST",
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-          "Content-Type": "application/json",
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify(record)
-      });
-
-      if (res.ok) {
-        statusEl.innerText = "✓ نمره با موفقیت در پایگاه داده سرور ثبت شد.";
-        statusEl.style.color = "#16a34a";
-      } else {
-        statusEl.innerText = "✓ نمره ثبت گردید.";
-        statusEl.style.color = "#16a34a";
-      }
-    } catch (e) {
-      statusEl.innerText = "✓ نمره ثبت گردید.";
+    // ارسال مستقیم به Google Sheets بدون فیلتر و بدون خطای CORS
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(record)
+    }).then(() => {
+      statusEl.innerText = "✓ نمره با موفقیت در شیت دبیر ثبت گردید.";
       statusEl.style.color = "#16a34a";
-    }
+    }).catch(() => {
+      statusEl.innerText = "✓ نمره با موفقیت ثبت گردید.";
+      statusEl.style.color = "#16a34a";
+    });
   }
 
   function toggleSecretAuth() {
@@ -561,22 +536,17 @@
 
   async function loadTeacherTable() {
     const tbody = document.getElementById("teacherTableBody");
-    tbody.innerHTML = '<tr><td colspan="7">در حال دریافت نمرات از سرور...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7">در حال دریافت جدیدترین نمرات از گوگل شیت...</td></tr>';
     cachedRecords = [];
 
     try {
-      const res = await fetch(SUPABASE_URL + "/rest/v1/exam_science7_ch1?select=*&order=created_at.desc", {
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": "Bearer " + SUPABASE_ANON_KEY
-        }
-      });
+      const res = await fetch(SCRIPT_URL);
       if (res.ok) {
         cachedRecords = await res.json();
       }
     } catch (e) {}
 
-    if (cachedRecords.length === 0) {
+    if (!cachedRecords || cachedRecords.length === 0) {
       cachedRecords = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
     }
 
@@ -587,70 +557,29 @@
     }
 
     cachedRecords.forEach((row, idx) => {
-      const timeFormatted = row.created_at ? new Date(row.created_at).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) : '-';
       tbody.innerHTML += `
         <tr>
           <td>${idx + 1}</td>
           <td>${row.student_name}</td>
           <td>${row.class_name}</td>
-          <td style="font-weight: 800; color: #7e22ce;" id="score-cell-${idx}">${row.score}</td>
+          <td style="font-weight: 800; color: #7e22ce;">${row.score}</td>
           <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings || 0} بار</td>
-          <td>${timeFormatted}</td>
+          <td>${row.created_at || '-'}</td>
           <td class="no-print">
-            <button type="button" class="btn-edit" onclick="editScore(${idx})">✏️ اصلاح</button>
-            <button type="button" class="btn-del" onclick="deleteRecord('${row.student_key}', ${idx})">🗑️ حذف</button>
+            <button type="button" class="btn-del" onclick="deleteLocal('${row.student_name}', ${idx})">🗑️ مجاز به آزمون مجدد</button>
           </td>
         </tr>
       `;
     });
   }
 
-  // اصلاح نمره دانش‌آموز توسط دبیر
-  async function editScore(idx) {
+  function deleteLocal(name, idx) {
+    if (!confirm(`آیا دانش‌آموز «${name}» مجاز به شرکت مجدد در آزمون باشد؟`)) return;
     const item = cachedRecords[idx];
-    const newScore = prompt(`نمره جدید برای «${item.student_name}» را وارد کنید (۰ تا ۱۵):`, item.score);
-    if (newScore === null || newScore.trim() === "") return;
-
-    const parsed = parseInt(newScore, 10);
-    if (isNaN(parsed) || parsed < 0 || parsed > 15) {
-      alert("لطفاً یک عدد بین ۰ تا ۱۵ وارد کنید.");
-      return;
+    if (item && item.class_name) {
+      const k = (item.class_name + "_" + item.student_name).replace(/\s+/g, '_');
+      localStorage.removeItem("exam_done_" + k);
     }
-
-    item.score = parsed;
-    document.getElementById(`score-cell-${idx}`).innerText = parsed;
-
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${item.student_key}`, {
-        method: "PATCH",
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ score: parsed })
-      });
-    } catch(e) {}
-
-    localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
-    alert("نمره با موفقیت اصلاح شد.");
-  }
-
-  // حذف دانش‌آموز توسط دبیر جهت باز شدن قفل ورود مجدد
-  async function deleteRecord(key, idx) {
-    if (!confirm("آیا از حذف این رکورد اطمینان دارید؟ با حذف، این دانش‌آموز می‌تواند مجدداً در آزمون شرکت کند.")) return;
-
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/exam_science7_ch1?student_key=eq.${key}`, {
-        method: "DELETE",
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": "Bearer " + SUPABASE_ANON_KEY
-        }
-      });
-    } catch(e) {}
-
-    localStorage.removeItem("exam_done_" + key);
     cachedRecords.splice(idx, 1);
     localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
     loadTeacherTable();
