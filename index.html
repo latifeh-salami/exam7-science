@@ -253,7 +253,7 @@
     </div>
   </div>
 
-  <!-- صفحه سوالات آزمون همراه با تایمر -->
+  <!-- صفحه آزمون همراه با تایمر -->
   <div id="step-exam" class="hidden">
     <div class="top-bar">
       <span id="displayStudentInfo"></span>
@@ -347,7 +347,7 @@
   let examActive = false;
   let cachedRecords = [];
 
-  // ضد اسکرین‌شات
+  // سیستم ضد اسکرین‌شات
   window.addEventListener('keyup', (e) => {
     if (e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.shiftKey && e.metaKey && (e.key === '3' || e.key === '4' || e.key === 's'))) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -357,18 +357,25 @@
     }
   });
 
-  // اخطار خروج از صفحه و تقلب
+  // سیستم ضدتقلب چندلایه مخصوص مرورگرهای موبایل و رایانه
+  function handleCheatTrigger() {
+    if (!examActive) return;
+    cheatWarnings++;
+    if (cheatWarnings >= 2) {
+      alert("⚠️ اخطار نهایی: به دلیل خروج مکرر از صفحه آزمون، پاسخ‌برگه شما مسدود و نمره ثبت شد!");
+      finishExam();
+    } else {
+      alert("⚠️ هشدار تقلب: هرگونه خروج از صفحه، باز کردن اعلان‌ها یا تغییر برنامه تخلف محسوب شده و در شیت دبیر ثبت می‌گردد! (بار ۱ از ۲)");
+    }
+  }
+
   document.addEventListener("visibilitychange", function() {
-    if (examActive && document.hidden) {
-      cheatWarnings++;
-      if (cheatWarnings >= 2) {
-        alert("⚠️ به دلیل خروج مکرر از صفحه، آزمون شما مسدود و برگه ثبت شد!");
-        finishExam();
-      } else {
-        alert("⚠️ هشدار تقلب: خروج از صفحه آزمون غیرمجاز است! در صورت تکرار آزمون بسته خواهد شد.");
-      }
+    if (document.hidden) {
+      handleCheatTrigger();
     }
   });
+  window.addEventListener("pagehide", handleCheatTrigger);
+  window.addEventListener("blur", handleCheatTrigger);
 
   function shuffleArray(original) {
     const arr = [...original];
@@ -394,7 +401,7 @@
     const studentKey = (studentClass + "_" + name).replace(/\s+/g, '_');
 
     if (localStorage.getItem("exam_done_" + studentKey) === "true") {
-      alert("شما قبلاً در این آزمون شرکت کرده‌اید. شرکت مجدد فقط با اجازه دبیر امکان‌پذیر است.");
+      alert("شما قبلاً در این آزمون شرکت کرده‌‌اید. شرکت مجدد فقط با مجوز دبیر امکان‌پذیر است.");
       return;
     }
 
@@ -434,7 +441,7 @@
 
   function loadQuestion() {
     const currentQ = examQuestions[currentQuestionIndex];
-    document.getElementById("questionProgress").innerText = "سوال " + (currentQuestionIndex + 1) + " از ۱۵ (هر سوال ۱ نمره)";
+    document.getElementById("questionProgress").innerText = "سوال " + (currentQuestionIndex + 1) + " از ۱۵";
     document.getElementById("questionText").innerText = (currentQuestionIndex + 1) + ". " + currentQ.q;
 
     const container = document.getElementById("optionsContainer");
@@ -475,38 +482,36 @@
     document.getElementById("step-exam").classList.add("hidden");
     document.getElementById("step-result").classList.remove("hidden");
 
-    document.getElementById("resultGreeting").innerText = "آفرین به تلاش قشنگت، " + studentData.name + " عزیز!";
+    document.getElementById("resultGreeting").innerText = "آفرین به تلاشت، " + studentData.name + " عزیز!";
     document.getElementById("resultScore").innerText = "نمره نهایی: " + score + " از ۱۵";
 
     localStorage.setItem("exam_done_" + studentData.key, "true");
 
-    const record = {
+    const statusEl = document.getElementById("syncStatus");
+    statusEl.innerText = "در حال ذخیره‌سازی در گوگل شیت دبیر...";
+
+    const sendScript = document.createElement("script");
+    const params = new URLSearchParams({
       student_name: studentData.name,
       class_name: studentData.className,
-      student_key: studentData.key,
       score: score,
-      cheat_warnings: cheatWarnings
-    };
+      cheat_warnings: cheatWarnings,
+      callback: "handleSendResponse",
+      t: Date.now()
+    });
 
-    let localList = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
-    localList.unshift(record);
-    localStorage.setItem("all_exam_results", JSON.stringify(localList));
-
-    const statusEl = document.getElementById("syncStatus");
-
-    // ارسال مستقیم به Google Sheets بدون فیلتر و بدون خطای CORS
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(record)
-    }).then(() => {
+    window.handleSendResponse = function() {
       statusEl.innerText = "✓ نمره با موفقیت در شیت دبیر ثبت گردید.";
       statusEl.style.color = "#16a34a";
-    }).catch(() => {
-      statusEl.innerText = "✓ نمره با موفقیت ثبت گردید.";
+      if (sendScript) sendScript.remove();
+    };
+
+    sendScript.src = SCRIPT_URL + "?" + params.toString();
+    sendScript.onerror = function() {
+      statusEl.innerText = "✓ نمره شما ثبت گردید.";
       statusEl.style.color = "#16a34a";
-    });
+    };
+    document.body.appendChild(sendScript);
   }
 
   function toggleSecretAuth() {
@@ -534,25 +539,33 @@
     document.getElementById("step-login").classList.remove("hidden");
   }
 
-  async function loadTeacherTable() {
+  function loadTeacherTable() {
     const tbody = document.getElementById("teacherTableBody");
-    tbody.innerHTML = '<tr><td colspan="7">در حال دریافت جدیدترین نمرات از گوگل شیت...</td></tr>';
-    cachedRecords = [];
+    tbody.innerHTML = '<tr><td colspan="7">در حال واکشی نمرات از گوگل شیت...</td></tr>';
 
-    try {
-      const res = await fetch(SCRIPT_URL);
-      if (res.ok) {
-        cachedRecords = await res.json();
-      }
-    } catch (e) {}
+    const oldScript = document.getElementById("jsonp_script");
+    if (oldScript) oldScript.remove();
 
-    if (!cachedRecords || cachedRecords.length === 0) {
-      cachedRecords = JSON.parse(localStorage.getItem("all_exam_results") || "[]");
-    }
+    window.handleSheetData = function(data) {
+      cachedRecords = data || [];
+      renderTeacherTable();
+    };
 
+    const s = document.createElement("script");
+    s.id = "jsonp_script";
+    s.src = SCRIPT_URL + "?callback=handleSheetData&t=" + Date.now();
+    s.onerror = function() {
+      tbody.innerHTML = '<tr><td colspan="7" style="color: red;">خطا در برقراری ارتباط با گوگل شیت.</td></tr>';
+    };
+    document.body.appendChild(s);
+  }
+
+  function renderTeacherTable() {
+    const tbody = document.getElementById("teacherTableBody");
     tbody.innerHTML = "";
+
     if (!cachedRecords || cachedRecords.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7">هنوز هیچ نمره‌ای ثبت نشده است.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7">هیچ نمره‌ای در فایل ثبت نشده است.</td></tr>';
       return;
     }
 
@@ -566,23 +579,27 @@
           <td style="color: ${row.cheat_warnings > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700;">${row.cheat_warnings || 0} بار</td>
           <td>${row.created_at || '-'}</td>
           <td class="no-print">
-            <button type="button" class="btn-del" onclick="deleteLocal('${row.student_name}', ${idx})">🗑️ مجاز به آزمون مجدد</button>
+            <button type="button" class="btn-del" onclick="deleteRemoteRecord(${row.rowIndex}, '${row.student_name}', '${row.class_name}')">🗑️ حذف قطعی و اجازه آزمون مجدد</button>
           </td>
         </tr>
       `;
     });
   }
 
-  function deleteLocal(name, idx) {
-    if (!confirm(`آیا دانش‌آموز «${name}» مجاز به شرکت مجدد در آزمون باشد؟`)) return;
-    const item = cachedRecords[idx];
-    if (item && item.class_name) {
-      const k = (item.class_name + "_" + item.student_name).replace(/\s+/g, '_');
-      localStorage.removeItem("exam_done_" + k);
-    }
-    cachedRecords.splice(idx, 1);
-    localStorage.setItem("all_exam_results", JSON.stringify(cachedRecords));
-    loadTeacherTable();
+  function deleteRemoteRecord(rowIdx, sName, sClass) {
+    if (!confirm(`آیا سابقه دانش‌آموز «${sName}» هم از گوگل شیت حذف شود و هم اجازه آزمون مجدد پیدا کند؟`)) return;
+
+    const studentKey = (sClass + "_" + sName).replace(/\s+/g, '_');
+    localStorage.removeItem("exam_done_" + studentKey);
+
+    const delScript = document.createElement("script");
+    window.handleDeleteSuccess = function() {
+      if (delScript) delScript.remove();
+      loadTeacherTable();
+    };
+
+    delScript.src = SCRIPT_URL + "?action=delete&row_index=" + rowIdx + "&callback=handleDeleteSuccess&t=" + Date.now();
+    document.body.appendChild(delScript);
   }
 </script>
 
